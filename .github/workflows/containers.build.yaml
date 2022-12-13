@@ -1,0 +1,187 @@
+name: "build"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+    paths:
+    - 'apps/**'
+    - 'dev/**'
+    - 'base/**'
+    - 'mirror/**'
+    - ".github/workflows/containers.build.yaml"
+
+jobs:
+  changes:
+    name: Get changes
+    runs-on: ubuntu-20.04
+    outputs:
+      matrix: "{\"container\": ${{ steps.reduce.outputs.containers }} }"
+    steps:
+    - name: Checkout
+      uses: actions/checkout@7dd9e2a3dc350cf687eb1b2a4fadfee8c8e49675 # v3
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        list-files: json
+        filters: |
+          changed:
+          - 'apps/**'
+          - 'mirror/**'
+    - run: echo '${{ toJson(steps.filter.outputs) }}' > changes.json
+    - id: reduce
+      run: |
+        CONTAINERS=$(jq --raw-output '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)
+        echo "$CONTAINERS"
+        echo "containers=${CONTAINERS}" >> $GITHUB_OUTPUT
+
+  build:
+    name: Build
+    runs-on: ubuntu-20.04
+    needs:
+    - changes
+    strategy:
+      matrix: ${{ fromJson(needs.changes.outputs.matrix) }}
+      fail-fast: false
+    # if: "!contains(github.event.head_commit.message, '[ci-skip]')"
+    steps:
+    - name: Checkout
+      uses: actions/checkout@7dd9e2a3dc350cf687eb1b2a4fadfee8c8e49675 # v3
+    # Define if tests and push should be run against which versions/platforms
+    - name: Prepare
+      id: prep
+      run: |
+        if test -f "./apps/${{ matrix.container }}/Dockerfile"; then
+          CATEGORY="apps"
+          VERSION=$(cat ./${CATEGORY}/${{ matrix.container }}/VERSION)
+        elif test -f "./mirror/${{ matrix.container }}/Dockerfile"; then
+          CATEGORY="mirror"
+          echo ::set-output name=category::${CATEGORY}
+          VERSION="$(head -1 ./${CATEGORY}/${{ matrix.container }}/Dockerfile |  cut -d'@' -f1 | sed 's/^FROM.*://' )"
+          VERSION=$(echo $VERSION | sed "s/latest-//g")
+          VERSION=$(echo $VERSION | sed "s/stable-//g")
+          VERSION=$(echo $VERSION | sed "s/edge-//g")
+          VERSION=$(echo $VERSION | sed "s/cpu-//g")
+          VERSION=$(echo $VERSION | sed "s/gpu-//g")
+          VERSION=$(echo $VERSION | sed "s/release-//g")
+          VERSION=$(echo $VERSION | sed "s/release_//g")
+          VERSION=$(echo $VERSION | sed "s/version-//g")
+          VERSION=$(echo $VERSION | sed "s/version_//g")
+          VERSION=$(echo $VERSION | sed "s/apache-//g")
+          VERSION=$(echo $VERSION | sed "s/ubuntu-//g")
+          VERSION=$(echo $VERSION | sed "s/focal-//g")
+          VERSION=$(echo $VERSION | sed "s/fpm-//g")
+          VERSION=$(echo $VERSION | sed "s/vaapi-//g")
+          VERSION=$(echo $VERSION | sed "s/cuda-//g")
+          VERSION=$(echo $VERSION | sed "s/-centos7//g")
+          VERSION=$(echo $VERSION | sed "s/java[0-9]*-//g")
+          VERSION="${VERSION#*V.}"
+          VERSION="${VERSION#*v.}"
+          VERSION="${VERSION#*v-}"
+          VERSION="${VERSION#*v}"
+          VERSION="${VERSION%-*}"
+          if (echo "$VERSION" | grep -Pq "^\d+\.\d+$"); then
+            VERSION="${VERSION}.0"
+          fi;
+        fi
+        echo ::set-output name=category::${CATEGORY}
+        echo ::set-output name=version::${VERSION}
+        PLATFORM="linux/amd64"
+        echo ::set-output name=platform::${PLATFORM}
+        if [ "${{github.event_name}}" == "pull_request" ]; then
+          echo ::set-output name=push::false
+          echo ::set-output name=cache_from::"type=registry,ref=ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:buildcache" || echo ::set-output name=cache_from::""
+          echo ::set-output name=cache_to::""
+        else
+          echo ::set-output name=push::true
+          echo ::set-output name=cache_from::"type=registry,ref=ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:buildcache"
+          echo ::set-output name=cache_to::"type=registry,ref=ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:buildcache,mode=max"
+        fi
+    - name: Get Time
+      id: time
+      uses: nanzm/get-time-action@5fb6a88787f272aeb246a10ebb8fabeb5f3c7b9c # tag=v1.1
+      with:
+        timeZone: 1
+        format: 'YYYYMMDDHHmmss'
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18 # tag=v2
+      with:
+        platforms: amd64
+
+    - name: Login to GHCR
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # tag=v2
+      if: github.event_name != 'pull_request'
+      with:
+        registry: ghcr.io
+        username: ${{ secrets.GHCR_USERNAME }}
+        password: ${{ secrets.GHCR_TOKEN }}
+
+    # - name: Login to Quay
+    #   uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # tag=v2
+    #   if: github.event_name != 'pull_request'
+    #   with:
+    #     registry: quay.io
+    #     username: ${{ secrets.QUAY_USER }}
+    #     password: ${{ secrets.QUAY_SECRET }}
+
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@57396166ad8aefe6098280995947635806a0e6ea # tag=v4
+      with:
+        # list of Docker images to use as base name for tags
+          # quay.io/szymonrychu/${{ matrix.container }}
+          # docker.io/szymonrychu/${{ matrix.container }}
+        images: |
+          ghcr.io/szymonrychu/${{ matrix.container }}
+    # Push if not a PR, otherwise just test the build process for all requested platforms
+    - name: Build and Push
+      id: push
+      uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5 # tag=v3
+      with:
+        build-args: |
+          VERSION=${{ steps.prep.outputs.version }}
+          CONTAINER_NAME=${{ matrix.container }}
+          CONTAINER_VER=${{ steps.prep.outputs.version }}
+        context: ./${{ steps.prep.outputs.category }}/${{ matrix.container }}/
+        platforms: ${{ steps.prep.outputs.platform }}
+        file: ./${{ steps.prep.outputs.category }}/${{ matrix.container }}/Dockerfile
+        push: ${{ steps.prep.outputs.push }}
+        labels: ${{ steps.meta.outputs.labels }}
+        # cache-from: ${{ steps.prep.outputs.cache_from }}
+        # cache-to: ${{ steps.prep.outputs.cache_to }}
+        # tags: |
+        #   quay.io/szymonrychu/${{ matrix.container }}:latest
+        #   quay.io/szymonrychu/${{ matrix.container }}:v${{ steps.prep.outputs.version }}
+        #   quay.io/szymonrychu/${{ matrix.container }}:${{ steps.prep.outputs.version }}
+        #   quay.io/szymonrychu/${{ matrix.container }}:build${{ steps.time.outputs.time }}
+        #   ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:latest
+        #   ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:v${{ steps.prep.outputs.version }}
+        #   ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:${{ steps.prep.outputs.version }}
+        #   ghcr.io/szymonrychu/${{ matrix.container }}:build${{ steps.time.outputs.time }}
+        tags: |
+          ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:latest
+          ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:v${{ steps.prep.outputs.version }}
+          ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:${{ steps.prep.outputs.version }}
+          ghcr.io/szymonrychu/${{ matrix.container }}:build${{ steps.time.outputs.time }}
+  
+  container-build-complete:
+    needs: [build]
+    name: Container Build Completed
+    runs-on: ubuntu-latest
+    steps:
+      - name: complete message
+        run: echo "Container Build and Tests Completed Successfully"
+
+  automerge:
+    needs: [container-build-complete]
+    if: github.event_name == 'pull_request'
+    name: Automerge build
+    runs-on: ubuntu-latest
+    steps:
+      - name: automerge
+        uses: pascalgn/automerge-action@eb68b061739cb9d81564f8e812d0b3c45f0fb09a # tag=v0.15.5
+        env:
+          GITHUB_TOKEN: "${{ secrets.BOT_TOKEN }}"
+          UPDATE_RETRIES: 12
+          UPDATE_RETRY_SLEEP: 60000
