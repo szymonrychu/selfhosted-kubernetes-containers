@@ -1,4 +1,4 @@
-name: "build"
+name: "Containers Build"
 
 on:
   workflow_dispatch:
@@ -20,7 +20,7 @@ jobs:
       matrix: "{\"container\": ${{ steps.reduce.outputs.containers }} }"
     steps:
     - name: Checkout
-      uses: actions/checkout@7dd9e2a3dc350cf687eb1b2a4fadfee8c8e49675 # v3
+      uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
     - uses: dorny/paths-filter@v2
       id: filter
       with:
@@ -32,8 +32,7 @@ jobs:
     - run: echo '${{ toJson(steps.filter.outputs) }}' > changes.json
     - id: reduce
       run: |
-        CONTAINERS=$(jq --raw-output '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)
-        echo "$CONTAINERS"
+        CONTAINERS="$(jq -rc '.changed_files | fromjson | .[] |= sub("(?<filepath>(?<first_directory>(?<root1>[/]?)[^/]+/)(?<second_directory>(?<root2>[/]?)[^/]+)(?<extra_paths>.+))"; "\(.second_directory)") | unique' changes.json)"
         echo "containers=${CONTAINERS}" >> $GITHUB_OUTPUT
 
   build:
@@ -47,7 +46,7 @@ jobs:
     # if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     steps:
     - name: Checkout
-      uses: actions/checkout@7dd9e2a3dc350cf687eb1b2a4fadfee8c8e49675 # v3
+      uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
     # Define if tests and push should be run against which versions/platforms
     - name: Prepare
       id: prep
