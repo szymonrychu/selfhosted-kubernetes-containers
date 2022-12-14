@@ -1,4 +1,4 @@
-FROM linuxserver/jellyfin:10.8.8
+FROM linuxserver/jellyfin:2021.12.16@sha256:983e3cf314deaa76b0aa58c82d59c285b2ac2a3ef2f316b0361cb4c8bb58b79d
 
 # FROM nvidia/cuda:10.1-devel-ubuntu18.04 as build-debs
 
