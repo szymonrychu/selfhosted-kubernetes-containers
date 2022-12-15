@@ -4,7 +4,7 @@ FROM alpine:3.17.0
 RUN apk --no-cache --no-progress upgrade && \
     apk --no-cache --no-progress add bash samba shadow tzdata && \
     addgroup -S smb && \
-    adduser -S -D -H -h /tmp -s /sbin/nologin -G smb -g 'Samba User' smbuser &&\
+    adduser -u 1000 -g 1000 -S -D -H -h /tmp -s /sbin/nologin -G smb -g 'Samba User' smbuser &&\
     file="/etc/samba/smb.conf" && \
     sed -i 's|^;* *\(log file = \).*|   \1/dev/stdout|' $file && \
     sed -i 's|^;* *\(load printers = \).*|   \1no|' $file && \
@@ -52,7 +52,6 @@ RUN apk --no-cache --no-progress upgrade && \
     echo '   fruit:veto_appledouble = no' >>$file && \
     echo '   fruit:wipe_intentionally_left_blank_rfork = yes' >>$file && \
     echo '' >>$file && \
-    chmod 0644 $file && \
     rm -rf /tmp/*
 
 COPY samba.sh /usr/bin/
