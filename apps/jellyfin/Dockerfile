@@ -1,94 +1,50 @@
-ARG DOTNET_VERSION=7.0
+FROM ubuntu:jammy
 
-FROM node:lts-alpine as web-builder
-ARG JELLYFIN_VERSION=v10.8.8
+# set version label
+ARG BUILD_DATE
+ARG VERSION
+ARG JELLYFIN_RELEASE
+LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
+LABEL maintainer="thelamer"
 
-RUN apk add curl git zlib zlib-dev autoconf g++ make libpng-dev gifsicle alpine-sdk automake libtool make gcc musl-dev nasm python3 \
-    && curl -L https://github.com/jellyfin/jellyfin-web/archive/${JELLYFIN_VERSION}.tar.gz | tar zxf - \
-    && cd jellyfin-web-* \
-    && npm ci --no-audit --unsafe-perm \
-    && mv dist /dist
+# environment settings
+ARG DEBIAN_FRONTEND="noninteractive"
+ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
 
-FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION} as builder
-ARG JELLYFIN_VERSION=v10.8.8
-WORKDIR /repo
-COPY . .
-ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
-# because of changes in docker and systemd we need to not build in parallel at the moment
-# see https://success.docker.com/article/how-to-reserve-resource-temporarily-unavailable-errors-due-to-tasksmax-setting
 RUN set -xe;\
-    curl -L https://github.com/jellyfin/jellyfin/archive/refs/tags/${JELLYFIN_VERSION}.tar.gz | tar xzf -;\
-    mv jellyfin-*/* ./ ;\
-    dotnet publish Jellyfin.Server --disable-parallel --configuration Release --output="/jellyfin" --self-contained --runtime linux-x64 -p:DebugSymbols=false -p:DebugType=none
+    apt-get update;\
+    apt-get install -y \
+        curl \
+        gnupg2;\
+    curl -Ls https://repo.jellyfin.org/ubuntu/jellyfin_team.gpg.key | apt-key add -;\
+    echo 'deb [arch=amd64] https://repo.jellyfin.org/ubuntu jammy main' > /etc/apt/sources.list.d/jellyfin.list;\
+    if [ -z ${JELLYFIN_RELEASE+x} ]; then \
+        JELLYFIN="jellyfin-server"; \
+    else \
+        JELLYFIN="jellyfin-server=${JELLYFIN_RELEASE}"; \
+    fi;\
+    apt-get update;\
+    apt-get install -y --no-install-recommends \
+        at \
+        ${JELLYFIN} \
+        jellyfin-ffmpeg5 \
+        jellyfin-web \
+        libfontconfig1 \
+        libfreetype6 \
+        libssl3 \
+        mesa-va-drivers;\
+    rm -rf \
+        /tmp/* \
+        /var/lib/apt/lists/* \
+        /var/tmp/*
 
-FROM debian:stable-slim as app
+COPY entrypoint.sh /entrypoint.sh
 
-# https://askubuntu.com/questions/972516/debian-frontend-environment-variable
-# http://stackoverflow.com/questions/48162574/ddg#49462622
-# https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(Native-GPU-Support)
-ENV DEBIAN_FRONTEND="noninteractive" \
-    APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn \
-    NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
+ENTRYPOINT /entrypoint.sh
 
-# https://github.com/intel/compute-runtime/releases
-ARG GMMLIB_VERSION=22.0.2
-ARG IGC_VERSION=1.0.10395
-ARG NEO_VERSION=22.08.22549
-ARG LEVEL_ZERO_VERSION=1.3.22549
-
-# Install dependencies:
-# mesa-va-drivers: needed for AMD VAAPI. Mesa >= 20.1 is required for HEVC transcoding.
-# curl: healthcheck
-RUN apt-get update \
- && apt-get install --no-install-recommends --no-install-suggests -y ca-certificates gnupg wget curl \
- && wget -O - https://repo.jellyfin.org/jellyfin_team.gpg.key | apt-key add - \
- && echo "deb [arch=$( dpkg --print-architecture )] https://repo.jellyfin.org/$( awk -F'=' '/^ID=/{ print $NF }' /etc/os-release ) $( awk -F'=' '/^VERSION_CODENAME=/{ print $NF }' /etc/os-release ) main" | tee /etc/apt/sources.list.d/jellyfin.list \
- && apt-get update \
- && apt-get install --no-install-recommends --no-install-suggests -y \
-   mesa-va-drivers \
-   jellyfin-ffmpeg \
-   openssl \
-   locales \
-# Intel VAAPI Tone mapping dependencies:
-# Prefer NEO to Beignet since the latter one doesn't support Comet Lake or newer for now.
-# Do not use the intel-opencl-icd package from repo since they will not build with RELEASE_WITH_REGKEYS enabled.
- && mkdir intel-compute-runtime \
- && cd intel-compute-runtime \
- && wget https://github.com/intel/compute-runtime/releases/download/${NEO_VERSION}/intel-gmmlib_${GMMLIB_VERSION}_amd64.deb \
- && wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-${IGC_VERSION}/intel-igc-core_${IGC_VERSION}_amd64.deb \
- && wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-${IGC_VERSION}/intel-igc-opencl_${IGC_VERSION}_amd64.deb \
- && wget https://github.com/intel/compute-runtime/releases/download/${NEO_VERSION}/intel-opencl-icd_${NEO_VERSION}_amd64.deb \
- && wget https://github.com/intel/compute-runtime/releases/download/${NEO_VERSION}/intel-level-zero-gpu_${LEVEL_ZERO_VERSION}_amd64.deb \
- && dpkg -i *.deb \
- && cd .. \
- && rm -rf intel-compute-runtime \
- && apt-get remove gnupg wget -y \
- && apt-get clean autoclean -y \
- && apt-get autoremove -y \
- && rm -rf /var/lib/apt/lists/* \
- && mkdir -p /cache /config /media \
- && chmod 777 /cache /config /media \
- && sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && locale-gen
-
-# ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-ENV LC_ALL en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-
-COPY --from=builder /jellyfin /jellyfin
-COPY --from=web-builder /dist /jellyfin/jellyfin-web
-
-EXPOSE 8096
-VOLUME /cache /config
-ENTRYPOINT ["./jellyfin/jellyfin", \
-    "--datadir", "/config", \
-    "--cachedir", "/cache", \
-    "--ffmpeg", "/usr/lib/jellyfin-ffmpeg/ffmpeg"]
-
-HEALTHCHECK --interval=30s --timeout=30s --start-period=10s --retries=3 \
-     CMD curl -Lk -fsS "${HEALTHCHECK_URL}" || exit 1
+# ports and volumes
+EXPOSE 8096 8920
+VOLUME /config
 
 
 # FROM nvidia/cuda:10.1-devel-ubuntu18.04 as build-debs
