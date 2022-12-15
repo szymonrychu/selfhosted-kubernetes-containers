@@ -52,6 +52,7 @@ RUN apk --no-cache --no-progress upgrade && \
     echo '   fruit:veto_appledouble = no' >>$file && \
     echo '   fruit:wipe_intentionally_left_blank_rfork = yes' >>$file && \
     echo '' >>$file && \
+    chmod 0644 $file && \
     rm -rf /tmp/*
 
 COPY samba.sh /usr/bin/
