@@ -1,4 +1,51 @@
-FROM linuxserver/jellyfin:2021.12.16@sha256:983e3cf314deaa76b0aa58c82d59c285b2ac2a3ef2f316b0361cb4c8bb58b79d
+FROM ubuntu:jammy
+
+# set version label
+ARG BUILD_DATE
+ARG VERSION
+ARG JELLYFIN_RELEASE
+LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
+LABEL maintainer="thelamer"
+
+# environment settings
+ARG DEBIAN_FRONTEND="noninteractive"
+ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
+
+RUN set -xe;\
+    apt-get update;\
+    apt-get install -y \
+        curl \
+        gnupg2;\
+    curl -Ls https://repo.jellyfin.org/ubuntu/jellyfin_team.gpg.key | apt-key add -;\
+    echo 'deb [arch=amd64] https://repo.jellyfin.org/ubuntu jammy main' > /etc/apt/sources.list.d/jellyfin.list;\
+    if [ -z ${JELLYFIN_RELEASE+x} ]; then \
+        JELLYFIN="jellyfin-server"; \
+    else \
+        JELLYFIN="jellyfin-server=${JELLYFIN_RELEASE}"; \
+    fi;\
+    apt-get update;\
+    apt-get install -y --no-install-recommends \
+        at \
+        ${JELLYFIN} \
+        jellyfin-ffmpeg5 \
+        jellyfin-web \
+        libfontconfig1 \
+        libfreetype6 \
+        libssl3 \
+        mesa-va-drivers;\
+    rm -rf \
+        /tmp/* \
+        /var/lib/apt/lists/* \
+        /var/tmp/*
+
+COPY entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT /entrypoint.sh
+
+# ports and volumes
+EXPOSE 8096 8920
+VOLUME /config
+
 
 # FROM nvidia/cuda:10.1-devel-ubuntu18.04 as build-debs
 
