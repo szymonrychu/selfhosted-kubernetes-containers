@@ -14,6 +14,8 @@ ARG JELLYFIN_VERSION=v10.8.8
 WORKDIR /repo
 COPY . .
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
 # because of changes in docker and systemd we need to not build in parallel at the moment
 # see https://success.docker.com/article/how-to-reserve-resource-temporarily-unavailable-errors-due-to-tasksmax-setting
 RUN set -xe;\
