@@ -12,8 +12,9 @@ RUN set -ex;\
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 RUN set -ex;\
-    wget -qO /usr/local/bin/stern https://github.com/wercker/stern/releases/download/1.11.0/stern_linux_amd64;\
-    chmod +x /usr/local/bin/stern;\
+    wget -qO /tmp/stern.tar.gz https://github.com/stern/stern/releases/download/v1.22.0/stern_1.22.0_linux_amd64.tar.gz;\
+    cd /tmp/;tar -xvzf /tmp/stern.tar.gz; cd -;\
+    mv /tmp/stern /usr/local/bin/stern;\
     wget -qO /usr/local/bin/sops https://github.com/mozilla/sops/releases/download/v3.7.3/sops-v3.7.3.linux.amd64;\
     chmod a+x /usr/local/bin/sops;\
     wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64;\
@@ -34,6 +35,7 @@ RUN set -ex;\
     unzip /tmp/terraform.zip;\
     rm /tmp/terraform.zip;\
     mv terraform /usr/local/bin/terraform;\
+    rm -rf /tmp/*;\
     chown -R abc /config
 
 USER abc
