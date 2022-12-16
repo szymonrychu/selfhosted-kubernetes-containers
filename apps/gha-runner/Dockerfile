@@ -44,8 +44,8 @@ WORKDIR /home/github
 COPY --chown=github:github entrypoint.sh ./entrypoint.sh
 
 RUN set -xe;\
-    helm plugin install https://github.com/databus23/helm-diff;\
-    helm plugin install https://github.com/jkroepke/helm-secrets;\
+    helm plugin install --version v3.6.0 https://github.com/databus23/helm-diff;\
+    helm plugin install --version v3.15.0 https://github.com/jkroepke/helm-secrets;\
     curl -O -L https://github.com/actions/runner/releases/download/v$RUNNER_VERSION/actions-runner-linux-x64-$RUNNER_VERSION.tar.gz;\
     tar xzf ./actions-runner-linux-x64-$RUNNER_VERSION.tar.gz;\
     sudo ./bin/installdependencies.sh;\
