@@ -1,4 +1,4 @@
-FROM lscr.io/linuxserver/code-server:4.9.1@sha256:dbbfbc1bc223b2fed9a3c3aaff43c0561818551b60170917b5b7885d0820b9d1
+FROM codercom/code-server:4.9.1
 
 USER root
 
@@ -6,10 +6,6 @@ RUN set -ex;\
     apt-get update;\
     apt-get install -y --no-install-recommends \
         wget git vim curl jq gnupg zsh sed unzip
-
-RUN set -ex;\
-    adduser abc sudo;\
-    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 RUN set -ex;\
     wget -qO /tmp/stern.tar.gz https://github.com/stern/stern/releases/download/v1.22.0/stern_1.22.0_linux_amd64.tar.gz;\
@@ -36,27 +32,16 @@ RUN set -ex;\
     rm /tmp/terraform.zip;\
     mv terraform /usr/local/bin/terraform;\
     rm -rf /tmp/*;\
-    chown -R abc /config
+    chown -R coder /home/coder
 
-USER abc
+USER coder
 
 RUN set -xe;\
     sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)";\
-    mkdir -p /config/.oh-my-zsh/completions;\
-    ln -s /opt/kubectx/completion/_kubectx.zsh /config/.oh-my-zsh/completions/_kubectx.zsh;\
-    ln -s /opt/kubectx/completion/_kubens.zsh /config/.oh-my-zsh/completions/_kubens.zsh;\
-    echo 'source <(helm completion zsh)' >> /config/.zshrc;\
-    wget -qO /config/.oh-my-zsh/completions/_helmfile.zsh https://raw.githubusercontent.com/roboll/helmfile/master/autocomplete/helmfile_zsh_autocomplete;\
-    echo 'source <(stern --completion=zsh)' >> /config/.zshrc
+    mkdir -p /home/coder/.oh-my-zsh/completions;\
+    ln -s /opt/kubectx/completion/_kubectx.zsh /home/coder/.oh-my-zsh/completions/_kubectx.zsh;\
+    ln -s /opt/kubectx/completion/_kubens.zsh /home/coder/.oh-my-zsh/completions/_kubens.zsh;\
+    echo 'source <(helm completion zsh)' >> /home/coder/.zshrc;\
+    wget -qO /home/coder/.oh-my-zsh/completions/_helmfile.zsh https://raw.githubusercontent.com/roboll/helmfile/master/autocomplete/helmfile_zsh_autocomplete;\
+    echo 'source <(stern --completion=zsh)' >> /home/coder/.zshrc
 
-
-USER root
-
-# ENTRYPOINT [ "/bin/bash" ]
-
-# CMD [ "-c", "HOME='/config' /app/code-server/bin/code-server --bind-addr=0.0.0.0:8443 --user-data-dir=/config/.config/data --extensions-dir=/config/.config/extensions --disable-telemetry --auth=${AUTH:-none} --proxy-domain=${PROXY_DOMAIN} /config"]
-
-
-
-
-# RUN unset NB_USER
