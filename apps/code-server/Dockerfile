@@ -1,4 +1,4 @@
-FROM lscr.io/linuxserver/code-server:4.9.1
+FROM lscr.io/linuxserver/code-server:4.9.1@sha256:dbbfbc1bc223b2fed9a3c3aaff43c0561818551b60170917b5b7885d0820b9d1
 
 USER root
 
