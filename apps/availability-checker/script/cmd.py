@@ -66,9 +66,12 @@ class Server(KubernetesClient):
             status_codes = []
             for host in self._get_ingresses_hosts():
                 url = f'https://{host}'
-                r = requests.get(url)
-                logging.info(f"Request to url:'{url}' finished with '{r.status_code}' status code")
-                status_codes.append(r.status_code in Server.VALID_HTTP_CODES)
+                try:
+                    r = requests.get(url)
+                    logging.info(f"Request to url:'{url}' finished with '{r.status_code}' status code")
+                    status_codes.append(r.status_code in Server.VALID_HTTP_CODES)
+                except requests.exceptions.ConnectionError as e:
+                    logging.warning(f"Problem calling url:'{url}', see error below:\n{str(e)}")
             if status_codes and not any(status_codes):
                 logging.info('All hosts unavailable, sending reboot request!')
                 socket.send_string(f'{self.__topic_id} reboot')
