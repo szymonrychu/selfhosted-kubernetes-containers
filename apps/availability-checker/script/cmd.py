@@ -77,6 +77,7 @@ class Server(KubernetesClient):
             if status_codes and not any(status_codes):
                 logging.info('All hosts unavailable, sending reboot request!')
                 socket.send_string(f'{self.__topic_id} reboot')
+            logging.info(f'Sleeping for {self.__sleep_time_s}s')
             time.sleep(self.__sleep_time_s)
 
     def stop(self):
@@ -116,7 +117,7 @@ if __name__ == '__main__':
     client_parser = subparsers.add_parser("client")
     client_parser.add_argument('-u', '--host', type=str, default='localhost', required=False, help='Host for ZMQ sub')
     server_parser = subparsers.add_parser("server")
-    client_parser.add_argument('-s', '--sleep-time', type=int, default=10, required=False, help='Host for ZMQ sub')
+    server_parser.add_argument('-s', '--sleep-time', type=int, default=10, required=False, help='Host for ZMQ sub')
 
     args = parser.parse_args(sys.argv[1:])
 
