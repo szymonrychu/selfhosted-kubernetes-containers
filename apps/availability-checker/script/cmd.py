@@ -5,6 +5,7 @@ import zmq
 import requests
 import os
 import logging
+import sys
 
 from kubernetes import client, config
 from kubernetes.client.rest import ApiException
@@ -110,7 +111,7 @@ if __name__ == '__main__':
     client_parser.add_argument('-u', '--host', type=str, default='localhost', required=False, help='Host for ZMQ sub')
     server_parser = subparsers.add_parser("server")
 
-    args = parser.parse_args()
+    args = parser.parse_args(sys.argv[1:])
 
     if args.subparser == 'client':
         cmd = Client(args.host, args.port, args.topic)

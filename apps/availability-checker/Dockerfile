@@ -15,7 +15,7 @@ WORKDIR /checker
 
 COPY script/cmd.py /checker/cmd.py
 
-ENTRYPOINT '/usr/bin/python3' '/checker/cmd.py'
+ENTRYPOINT ["/checker/cmd.py"]
 
 
     
