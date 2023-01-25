@@ -6,6 +6,7 @@ import requests
 import os
 import logging
 import sys
+import time
 
 from kubernetes import client, config
 from kubernetes.client.rest import ApiException
@@ -36,10 +37,11 @@ class Server(KubernetesClient):
 
     VALID_HTTP_CODES = [200]
 
-    def __init__(self, port:int = 5556, topic_id:int = 1):
+    def __init__(self, port:int = 5556, topic_id:int = 1, sleep_time_s:int = 60):
         self.__port = port
         self.__topic_id = topic_id
         self.__enabled = False
+        self.__sleep_time_s = sleep_time_s
 
     def _get_ingresses_hosts(self):
         api_client = client.NetworkingV1Api()
@@ -75,6 +77,7 @@ class Server(KubernetesClient):
             if status_codes and not any(status_codes):
                 logging.info('All hosts unavailable, sending reboot request!')
                 socket.send_string(f'{self.__topic_id} reboot')
+            time.sleep(self.__sleep_time_s)
 
     def stop(self):
         self.__enabled = False
@@ -113,6 +116,7 @@ if __name__ == '__main__':
     client_parser = subparsers.add_parser("client")
     client_parser.add_argument('-u', '--host', type=str, default='localhost', required=False, help='Host for ZMQ sub')
     server_parser = subparsers.add_parser("server")
+    client_parser.add_argument('-s', '--sleep-time', type=int, default=10, required=False, help='Host for ZMQ sub')
 
     args = parser.parse_args(sys.argv[1:])
 
@@ -120,7 +124,7 @@ if __name__ == '__main__':
         cmd = Client(args.host, args.port, args.topic)
         cmd.start()
     elif args.subparser == 'server':
-        cmd = Server(args.port, args.topic)
+        cmd = Server(args.port, args.topic, args.sleep_time)
         cmd.start()
     else:
         parser.print_help()
