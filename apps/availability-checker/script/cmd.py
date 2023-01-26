@@ -65,16 +65,16 @@ class Server(KubernetesClient):
         logging.info(f"Binded to 'tcp://*:{self.__port}'")
         self.__enabled = True
         while self.__enabled:
-            status_codes = []
+            status_codes = {}
             for host in self._get_ingresses_hosts():
                 url = f'https://{host}'
                 try:
                     r = requests.get(url)
                     logging.info(f"Request to url:'{url}' finished with '{r.status_code}' status code")
-                    status_codes.append(r.status_code in Server.VALID_HTTP_CODES)
+                    status_codes[host] = r.status_code in Server.VALID_HTTP_CODES
                 except requests.exceptions.ConnectionError as e:
                     logging.warning(f"Problem calling url:'{url}', see error below:\n{str(e)}")
-            if status_codes and not any(status_codes):
+            if status_codes and not any(status_codes.values()):
                 logging.info('All hosts unavailable, sending reboot request!')
                 socket.send_string(f'{self.__topic_id} reboot')
             logging.info(f'Sleeping for {self.__sleep_time_s}s')
