@@ -181,7 +181,7 @@ class FFMpegFile():
         else:
             return {}
 
-    def convert(self, stats_period=1, out_path=None, output_resolution=None, output_bitrate='10M', threads=1):
+    def convert(self, stats_period=1, out_path=None, output_resolution=None, output_bitrate='10M', threads=1, overwrite=False):
         src_fpath_wo_ext, src_fname_ext = '.'.join(self.__fpath.split('.')[:-1]), self.__fpath.split('.')[-1]
         src_fname_wo_ext = os.path.basename(src_fpath_wo_ext)
         subtitles_fpath = '.'.join([src_fpath_wo_ext, 'srt'])
@@ -190,8 +190,11 @@ class FFMpegFile():
             out_path = os.path.join(os.path.dirname(self.__fpath), f"{src_fname_wo_ext}_tmp.{src_fname_ext}")
         
         if os.path.isfile(out_path):
-            logging.warning(f"Temporary output file already exists, removing '{out_path}'")
-            os.remove(out_path)
+            if overwrite:
+                logging.warning(f"Temporary output file already exists, removing '{out_path}'")
+                os.remove(out_path)
+            else:
+                raise FFMpegFileError('Conversion already happens!')
         
         has_subtitles = os.path.isfile(subtitles_fpath)
 
