@@ -26,7 +26,7 @@ for root,d_names,f_names in os.walk(os.path.abspath(args.root_dir)):
     for f in f_names:
         fpath = os.path.join(root, f)
         try:
-            for data in FFMpegFile(fpath).convert(output_bitrate=bitrate, threads=multiprocessing.cpu_count()):
+            for data in FFMpegFile(fpath).convert(threads=multiprocessing.cpu_count()):
                 progress = data['progress']
                 logging.info(f'Conversion progress {progress}%.')
             files.append()
