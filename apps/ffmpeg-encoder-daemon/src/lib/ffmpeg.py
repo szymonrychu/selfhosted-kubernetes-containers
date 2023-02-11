@@ -116,7 +116,7 @@ class FFMpegFile():
         self.__data_len = 0
 
     def load(self):
-        _cmd = CMD(f'ffprobe -print_format json -show_streams -show_format -pretty -loglevel quiet {self.__fpath}')
+        _cmd = CMD(f'ffprobe -print_format json -show_streams -show_format -pretty -loglevel quiet "{self.__fpath}"')
         try:
             _cmd.run()
         except CMDError as e:
@@ -213,12 +213,12 @@ class FFMpegFile():
         with tempfile.NamedTemporaryFile() as tmp:
             cmd = [
                 'ffmpeg',
-                f'-i {self.__fpath}',
+                f'-i "{self.__fpath}"',
             ]
 
             if has_subtitles:
                 cmd.extend([
-                    f'-i {subtitles_fpath}',
+                    f'-i "{subtitles_fpath}"',
                 ])
             
             cmd.extend([
@@ -247,7 +247,7 @@ class FFMpegFile():
                 f'-maxrate {output_bitrate}',
                 f'-bufsize {output_bitrate}',
                 f'-threads {threads}',
-                out_path
+                f'"{out_path}"'
             ])
 
             logging.info(f"Started convert from '{self.__fpath}' to '{out_path}' using {threads} threads")
