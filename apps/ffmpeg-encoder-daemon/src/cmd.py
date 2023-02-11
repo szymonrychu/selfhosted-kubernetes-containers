@@ -25,6 +25,7 @@ files = []
 for root,d_names,f_names in os.walk(os.path.abspath(args.root_dir)):
     for f in f_names:
         fpath = os.path.join(root, f)
+        logging.info(f"Found file '{fpath}'")
         try:
             ffmpeg_file = FFMpegFile(fpath)
             if ffmpeg_file.is_video:
@@ -33,5 +34,6 @@ for root,d_names,f_names in os.walk(os.path.abspath(args.root_dir)):
                     logging.info(f'Conversion progress {progress}%.')
                 files.append()
         except FFMpegFileError:
+            logging.info(f"Ommiting")
             pass
 
