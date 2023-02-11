@@ -6,6 +6,7 @@ RUN apt-get update;\
     apt-get install -y \
         ffmpeg \
         python3-pip\
+        libmagic1\
     ;\
     mkdir /ffmpeg-daemon;\
     mkdir /workdir

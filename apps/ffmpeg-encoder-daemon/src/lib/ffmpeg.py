@@ -4,9 +4,9 @@ import os
 import logging
 import json
 import tempfile
-from threading import Thread
 import time
 from datetime import datetime, timedelta
+import magic
 
 class CMDError(Exception):
     pass
@@ -113,6 +113,9 @@ class FFMpegFile():
     
     def __init__(self, fpath):
         self.__fpath = fpath
+        self.__data_len = 0
+
+    def load(self):
         _cmd = CMD(f'ffprobe -print_format json -show_streams -show_format -pretty -loglevel quiet {self.__fpath}')
         try:
             _cmd.run()
@@ -129,11 +132,20 @@ class FFMpegFile():
                     self._video_stream_id = id
                 elif self._audio_stream_id < 0 and stream['codec_type'] == 'audio':
                     self._audio_stream_id = id
-        self.__data_len = 0
+        result = []
+        for stream in self._metadata['streams']:
+            _stream = {'codec': stream['codec_name']}
+            try:
+                _stream['width'] = stream['width']
+                _stream['height'] = stream['height']
+            except KeyError:
+                pass
+            result.append(_stream)
+        return result
 
     @property
     def is_video(self):
-        return self._video_stream_id != -1 and self._audio_stream_id != -1
+        return magic.from_file(self.__fpath, mime=True).startswith('video')
 
     @property
     def resolution(self):

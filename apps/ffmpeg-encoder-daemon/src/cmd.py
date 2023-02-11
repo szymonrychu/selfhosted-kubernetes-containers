@@ -26,14 +26,15 @@ for root,d_names,f_names in os.walk(os.path.abspath(args.root_dir)):
     for f in f_names:
         fpath = os.path.join(root, f)
         logging.info(f"Found file '{fpath}'")
-        try:
-            ffmpeg_file = FFMpegFile(fpath)
-            if ffmpeg_file.is_video:
+        ffmpeg_file = FFMpegFile(fpath)
+        if ffmpeg_file.is_video:
+            try:
+                details = ffmpeg_file.load()
+                logging.info(str(details))
+
                 for data in ffmpeg_file.convert(threads=multiprocessing.cpu_count()):
                     progress = data['progress']
                     logging.info(f'Conversion progress {progress}%.')
-                files.append()
-        except FFMpegFileError:
-            logging.info(f"Ommiting")
-            pass
-
+                
+            except FFMpegFileError as e:
+                logging.info(str(e))
