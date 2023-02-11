@@ -119,8 +119,8 @@ class FFMpegFile():
         _cmd = CMD(f'ffprobe -print_format json -show_streams -show_format -pretty -loglevel quiet {self.__fpath}')
         try:
             _cmd.run()
-        except CMDError:
-            raise FFMpegFileError('Invalid file')
+        except CMDError as e:
+            raise FFMpegFileError(str(e))
         if _cmd.stderr:
             raise FFMpegFileError('FFMpeg shouldnt return stderr!')
         self._metadata = json.loads(_cmd.stdout)
