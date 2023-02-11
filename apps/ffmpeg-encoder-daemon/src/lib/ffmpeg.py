@@ -243,7 +243,7 @@ class FFMpegFile():
                 '-c:v libx264',
                 '-crf 18',
                 f'-vf {scale}format=yuv420p',
-                '-c:a copy',
+                '-c:a aac',
                 f'-maxrate {output_bitrate}',
                 f'-bufsize {output_bitrate}',
                 f'-threads {threads}',
