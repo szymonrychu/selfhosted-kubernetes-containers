@@ -133,7 +133,7 @@ class FFMpegFile():
 
     @property
     def is_video(self):
-        return self.duration > 0
+        return self._video_stream_id != -1
 
     @property
     def resolution(self):
