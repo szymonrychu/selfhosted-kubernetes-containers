@@ -155,6 +155,21 @@ class FFMpegFile():
         )
     
     @property
+    def is_fullHD(self):
+        w, h = self.resolution
+        return w == 1920 and h == 1080
+
+    @property
+    def is_more_than_fullHD(self):
+        w, h = self.resolution
+        return w > 1920 or h > 1080
+
+    @property
+    def is_less_than_fullHD(self):
+        w, h = self.resolution
+        return w < 1920 or h < 1080
+    
+    @property
     def is_hevc(self):
         return self.is_video and self._metadata['streams'][0]['codec_name'] == 'hevc'
 
@@ -193,7 +208,7 @@ class FFMpegFile():
         else:
             return {}
 
-    def convert(self, stats_period=1, out_path=None, output_resolution=None, output_bitrate='10M', threads=1, overwrite=False):
+    def convert(self, stats_period=1, out_path=None, output_resolution=(1920,1080), output_bitrate='10M', threads=1, overwrite=False):
         src_fpath_wo_ext, src_fname_ext = '.'.join(self.__fpath.split('.')[:-1]), self.__fpath.split('.')[-1]
         src_fname_wo_ext = os.path.basename(src_fpath_wo_ext)
         subtitles_fpath = '.'.join([src_fpath_wo_ext, 'srt'])
@@ -213,6 +228,7 @@ class FFMpegFile():
         with tempfile.NamedTemporaryFile() as tmp:
             cmd = [
                 'ffmpeg',
+                '-hwaccel auto',
                 f'-i "{self.__fpath}"',
             ]
 
@@ -241,12 +257,15 @@ class FFMpegFile():
                 f'-progress {tmp.name}',
                 f'-stats_period {stats_period}',
                 '-c:v libx264',
-                '-crf 18',
+                '-crf 17',
+                '-preset slow',
                 f'-vf {scale}format=yuv420p',
                 '-c:a aac',
+                f'-minrate {output_bitrate}',
                 f'-maxrate {output_bitrate}',
-                f'-bufsize {output_bitrate}',
+                f'-bufsize {output_bitrate*2}',
                 f'-threads {threads}',
+                '-x264-params opencl=true',
                 f'"{out_path}"'
             ])
 

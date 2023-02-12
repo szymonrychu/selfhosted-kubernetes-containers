@@ -31,11 +31,15 @@ for root,d_names,f_names in os.walk(os.path.abspath(args.root_dir)):
             try:
                 details = ffmpeg_file.load()
                 logging.info(str(details))
+
+                last_progress = 0
                 
-                if ffmpeg_file.is_hevc:
-                    for data in ffmpeg_file.convert(threads=multiprocessing.cpu_count()):
+                if ffmpeg_file.is_hevc or ffmpeg_file.is_more_than_fullHD:
+                    for data in ffmpeg_file.convert(threads=round(multiprocessing.cpu_count()/2), stats_period=30):
                         progress = data['progress']
-                        logging.info(f'Conversion progress {progress}%.')
+                        if last_progress != progress:
+                            logging.info(f'Conversion progress {progress}%.')
+                            last_progress = progress
                 
             except FFMpegFileError as e:
                 logging.info(str(e))
