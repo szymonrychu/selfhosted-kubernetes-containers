@@ -208,7 +208,7 @@ class FFMpegFile():
         else:
             return {}
 
-    def convert(self, stats_period=1, out_path=None, output_resolution=(1920,1080), output_bitrate='10M', threads=1, overwrite=False):
+    def convert(self, stats_period=1, out_path=None, output_resolution=(1920,1080), output_bitrate='10M', output_buff_size='20M', threads=1, overwrite=False):
         src_fpath_wo_ext, src_fname_ext = '.'.join(self.__fpath.split('.')[:-1]), self.__fpath.split('.')[-1]
         src_fname_wo_ext = os.path.basename(src_fpath_wo_ext)
         subtitles_fpath = '.'.join([src_fpath_wo_ext, 'srt'])
@@ -263,7 +263,7 @@ class FFMpegFile():
                 '-c:a aac',
                 f'-minrate {output_bitrate}',
                 f'-maxrate {output_bitrate}',
-                f'-bufsize {output_bitrate*2}',
+                f'-bufsize {output_buff_size}',
                 f'-threads {threads}',
                 '-x264-params opencl=true',
                 f'"{out_path}"'
