@@ -1,4 +1,4 @@
-FROM codercom/code-server:4.10.0@sha256:dc6c87ae76edccb63b64aaf6149ec4f80f6a7e527a22a5feb1d5ec4572ad1644
+FROM codercom/code-server:4.10.1@sha256:68b4c30ec27e835391020db0287f071f174ee688376aefe71003d60edc9ff728
 
 USER root
 
