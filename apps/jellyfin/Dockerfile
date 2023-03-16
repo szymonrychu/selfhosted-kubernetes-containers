@@ -1,4 +1,4 @@
-FROM ubuntu:jammy@sha256:43626c5e3379892bb1408d9795c72c6f19f1be063f6725deea3365d38c6b9045
+FROM ubuntu:jammy@sha256:67211c14fa74f070d27cc59d69a7fa9aeff8e28ea118ef3babc295a0428a6d21
 
 # set version label
 ARG BUILD_DATE
