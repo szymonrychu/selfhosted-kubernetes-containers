@@ -1,4 +1,4 @@
-FROM debian:bookworm-20230109-slim
+FROM debian:bookworm-20230109-slim@sha256:9b8b22f153dc2099e609f56ec3790e5952f89d3e187e42686c0b95ad1f378d01
 
 SHELL ["/bin/sh", "-xec"]
 
