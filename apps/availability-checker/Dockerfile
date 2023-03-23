@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim@sha256:646a74df00c381b61136da7af92acd1520f525aec1dc98442da6ff25a6ac9221
+FROM debian:bullseye-slim@sha256:7acda01e55b086181a6fa596941503648e423091ca563258e2c1657d140355b1
 
 COPY script/requirements.txt /tmp/requirements.txt
 
