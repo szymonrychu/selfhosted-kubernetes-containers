@@ -1,2 +1,2 @@
-kubernetes==24.2.0
+kubernetes==26.1.0
 pyzmq==25.1.0
