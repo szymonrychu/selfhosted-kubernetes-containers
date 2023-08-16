@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim@sha256:59a751b3f0aaa097b42ebc19a0c429e80cf4d6b861fbe1453b9948aa5fa41200
+FROM debian:bullseye-slim@sha256:61386e11b5256efa33823cbfafd668dd651dbce810b24a8fb7b2e32fa7f65a85
 ARG RUNNER_VERSION="2.300.0"
 
 RUN set -xe;\
