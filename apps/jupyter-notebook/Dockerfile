@@ -92,6 +92,8 @@ RUN set -x;\
 COPY run-hooks.sh start.sh start-notebook.sh start-singleuser.sh /usr/local/bin/
 COPY jupyter_server_config.py docker_healthcheck.py /etc/jupyter/
 
+RUN chmod a+x /usr/local/bin/run-hooks.sh /usr/local/bin/start-notebook.sh /usr/local/bin/start-singleuser.sh
+
 EXPOSE $JUPYTER_PORT
 
 HEALTHCHECK --interval=5s --timeout=3s --start-period=5s --retries=3 \
