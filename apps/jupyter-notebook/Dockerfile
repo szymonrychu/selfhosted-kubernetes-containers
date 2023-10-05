@@ -48,6 +48,14 @@ RUN apt-get update --yes;\
     mkdir /usr/local/bin/start-notebook.d;\
     mkdir /usr/local/bin/before-notebook.d
 
+COPY run-hooks.sh start.sh start-notebook.sh start-singleuser.sh /usr/local/bin/
+COPY jupyter_server_config.py docker_healthcheck.py /etc/jupyter/
+
+RUN chmod a+x /usr/local/bin/run-hooks.sh \
+        /usr/local/bin/start.sh \
+        /usr/local/bin/start-notebook.sh \
+        /usr/local/bin/start-singleuser.sh
+
 USER ${NB_UID}
 
 RUN mkdir "/home/${NB_USER}/work"
@@ -88,11 +96,6 @@ RUN set -x;\
     jupyter lab clean ;\
     rm -rf "/home/${NB_USER}/.cache/yarn";\
     mamba clean --all -f -y
-
-COPY run-hooks.sh start.sh start-notebook.sh start-singleuser.sh /usr/local/bin/
-COPY jupyter_server_config.py docker_healthcheck.py /etc/jupyter/
-
-RUN chmod a+x /usr/local/bin/run-hooks.sh /usr/local/bin/start-notebook.sh /usr/local/bin/start-singleuser.sh
 
 EXPOSE $JUPYTER_PORT
 
