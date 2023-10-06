@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:focal
 ARG NB_USER="jupyter_notebook"
 ARG NB_UID="1000"
 ARG NB_GID="1000"
@@ -22,8 +22,13 @@ ENV DEBIAN_FRONTEND=noninteractive \
 ENV PATH="${CONDA_DIR}/bin:${PATH}" \
     HOME="/home/${NB_USER}"
 
-RUN apt-get update --yes;\
+RUN ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime;\
+    apt-get update --yes;\
     apt-get install --yes --no-install-recommends \
+        tzdata \
+        python3-pip \
+        dirmngr \
+        gnupg2 \
         bzip2 \
         ca-certificates \
         locales \
@@ -33,7 +38,8 @@ RUN apt-get update --yes;\
         fonts-liberation \
         run-one \
         wget;\
-    apt-get clean && rm -rf /var/lib/apt/lists/*;\
+    apt-get clean;\
+    rm -rf /var/lib/apt/lists/*;\
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen;\
     locale-gen;\
     sed -i 's/^#force_color_prompt=yes/force_color_prompt=yes/' /etc/skel/.bashrc;\
@@ -62,8 +68,7 @@ RUN mkdir "/home/${NB_USER}/work"
 
 COPY --chown="${NB_UID}:${NB_GID}" initial-condarc "${CONDA_DIR}/.condarc"
 
-RUN set -x;\
-    cd /tmp ;\
+RUN cd /tmp ;\
     arch=$(uname -m) ;\
     if [ "${arch}" = "x86_64" ]; then \
         # Should be simpler, see <https://github.com/mamba-org/mamba/issues/1437>
@@ -96,6 +101,7 @@ RUN set -x;\
     jupyter lab clean ;\
     rm -rf "/home/${NB_USER}/.cache/yarn";\
     mamba clean --all -f -y
+    
 
 EXPOSE $JUPYTER_PORT
 
@@ -105,6 +111,29 @@ HEALTHCHECK --interval=5s --timeout=3s --start-period=5s --retries=3 \
 # Configure container startup
 ENTRYPOINT ["tini", "-g", "--"]
 CMD ["start-notebook.sh"]
+
+ENV ROS_DISTRO noetic
+
+USER root
+
+RUN pip3 install jupyter_contrib_nbextensions;\
+    jupyter contrib nbextension install;\
+    jupyter nbextension enable varInspector/main;\
+    echo "deb http://packages.ros.org/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros1-latest.list;\
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654;\
+    apt-get update --yes;\
+    apt-get install --yes \
+        ros-noetic-ros-core=1.5.0-1* \
+        git \
+        curl \
+        vim;\
+    apt-get clean;\
+    rm -rf /var/lib/apt/lists/*;\
+    pip3 install jupyter bqplot pyyaml ipywidgets;\
+    jupyter nbextension enable --py --sys-prefix ipywidgets;\
+    pip3 install jupyros;\
+    jupyter nbextension enable --py --sys-prefix jupyros;\
+    jupyter labextension install jupyter-ros
 
 USER ${NB_UID}
 WORKDIR "${HOME}"
