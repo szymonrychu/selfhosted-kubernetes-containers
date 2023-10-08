@@ -1,0 +1,67 @@
+name: "Containers Build"
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  changes:
+    name: Get changes
+    runs-on: ubuntu-20.04
+    outputs:
+      changed_containers: ${{ steps.changed_files.outputs.all_changed_files }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+    - name: Get all test, doc and src files that have changed
+      id: changed_files
+      uses: tj-actions/changed-files@8238a4103220c636f2dad328ead8a7c8dbe316a3 # v39
+      with:
+        files: |
+          apps/
+        json: true
+        escape_json: false
+        dir_names: true
+        dir_names_max_depth: 2
+
+  build:
+    name: Build
+    runs-on: ubuntu-20.04
+    needs:
+    - changes
+    strategy:
+      matrix:
+        container_path: ${{ fromJson(needs.changes.outputs.changed_containers) }}
+      fail-fast: false
+    if: needs.changes.outputs.changed_containers != '[]'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+    # Define if tests and push should be run against which versions/platforms
+    - name: Prepare
+      id: prep
+      run: |
+        echo "version=$(cat ./apps/${{ matrix.container }}/VERSION)" >> "$GITHUB_OUTPUT"
+        echo "short_sha=$(echo "${GITHUB_SHA}" | cut -c1-8`)" >> "$GITHUB_OUTPUT"
+
+    # Push if not a PR, otherwise just test the build process for all requested platforms
+    - name: Build and Push
+      id: push
+      uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671 # v4
+      with:
+        context: ${{ matrix.container_path }}/
+        platforms: linux/amd64
+        file: ${{ matrix.container_path }}/Dockerfile
+        push: true
+        tags: |
+          ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:dev-${{ steps.prep.outputs.short_sha }}
+  
+  container-build-complete:
+    needs: [build]
+    name: Container Build Completed
+    runs-on: ubuntu-latest
+    steps:
+      - name: complete message
+        run: echo "Container Build and Tests Completed Successfully"
