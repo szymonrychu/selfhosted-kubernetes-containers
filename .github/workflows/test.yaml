@@ -1,4 +1,4 @@
-name: "Containers Build"
+name: "Containers Test"
 
 on:
   workflow_dispatch:
@@ -43,7 +43,7 @@ jobs:
     - name: Prepare
       id: prep
       run: |
-        echo "version=$(cat ./apps/${{ matrix.container }}/VERSION)" >> "$GITHUB_OUTPUT"
+        echo "version=$(cat ${{ matrix.container_path }}/VERSION)" >> "$GITHUB_OUTPUT"
         echo "short_sha=$(echo "${GITHUB_SHA}" | cut -c1-8`)" >> "$GITHUB_OUTPUT"
 
     # Push if not a PR, otherwise just test the build process for all requested platforms
