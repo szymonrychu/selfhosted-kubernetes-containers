@@ -5,7 +5,7 @@ on:
     types:
       - "completed"
     workflows:
-      - "Helm Lint"
+      - "Containers Test"
 
 jobs:
   merge:
