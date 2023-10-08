@@ -9,7 +9,7 @@ on:
 jobs:
   changes:
     name: Get changes
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     outputs:
       changed_containers: ${{ steps.changed_files.outputs.all_changed_files }}
     steps:
@@ -28,7 +28,7 @@ jobs:
 
   build:
     name: Build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
     - changes
     strategy:
