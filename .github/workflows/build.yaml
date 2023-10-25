@@ -51,6 +51,7 @@ jobs:
     - name: Prepare
       id: prep
       run: |
+        echo "container=$(basename ${{ matrix.container_path }})" >> "$GITHUB_OUTPUT"
         echo "version=$(cat ${{ matrix.container_path }}/VERSION)" >> "$GITHUB_OUTPUT"
         echo "short_sha=$(echo "${GITHUB_SHA}" | cut -c1-8)" >> "$GITHUB_OUTPUT"
 
@@ -64,9 +65,9 @@ jobs:
         file: ${{ matrix.container_path }}/Dockerfile
         push: true
         tags: |
-          ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:v${{ steps.prep.outputs.version }}
-          ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:${{ steps.prep.outputs.version }}
-          ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:${{ steps.prep.outputs.short_sha }}
+          ghcr.io/${{ github.repository_owner }}/${{ steps.prep.outputs.container }}:v${{ steps.prep.outputs.version }}
+          ghcr.io/${{ github.repository_owner }}/${{ steps.prep.outputs.container }}:${{ steps.prep.outputs.version }}
+          ghcr.io/${{ github.repository_owner }}/${{ steps.prep.outputs.container }}:${{ steps.prep.outputs.short_sha }}
   
   container-build-complete:
     needs: [build]
