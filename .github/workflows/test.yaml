@@ -14,10 +14,10 @@ jobs:
       changed_containers: ${{ steps.changed_files.outputs.all_changed_files }}
     steps:
     - name: Checkout
-      uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
     - name: Get all test, doc and src files that have changed
       id: changed_files
-      uses: tj-actions/changed-files@db153baf731265ad02cd490b07f470e2d55e3345 # v39
+      uses: tj-actions/changed-files@40526807ee1e208a1a8c1bbe6bd2d1b044ef6368 # v40
       with:
         files: |
           apps/
@@ -38,11 +38,12 @@ jobs:
     if: needs.changes.outputs.changed_containers != '[]'
     steps:
     - name: Checkout
-      uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
     # Define if tests and push should be run against which versions/platforms
     - name: Prepare
       id: prep
       run: |
+        echo "container=$(basename ${{ matrix.container_path }})" >> "$GITHUB_OUTPUT"
         echo "version=$(cat ${{ matrix.container_path }}/VERSION)" >> "$GITHUB_OUTPUT"
         echo "short_sha=$(echo "${GITHUB_SHA}" | cut -c1-8)" >> "$GITHUB_OUTPUT"
 
@@ -56,7 +57,7 @@ jobs:
         file: ${{ matrix.container_path }}/Dockerfile
         push: true
         tags: |
-          ghcr.io/${{ github.repository_owner }}/${{ matrix.container }}:dev-${{ steps.prep.outputs.short_sha }}
+          ghcr.io/${{ github.repository_owner }}/${{ steps.prep.outputs.container }}:dev-${{ steps.prep.outputs.short_sha }}
   
   container-build-complete:
     needs: [build]
