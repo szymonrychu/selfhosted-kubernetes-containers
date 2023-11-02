@@ -1,4 +1,4 @@
-FROM ubuntu:focal@sha256:ed4a42283d9943135ed87d4ee34e542f7f5ad9ecf2f244870e23122f703f91c2
+FROM ubuntu:jammy@sha256:2b7412e6465c3c7fc5bb21d3e6f1917c167358449fecac8176c6e496e5c1f05f
 ARG NB_USER="jupyter_notebook"
 ARG NB_UID="1000"
 ARG NB_GID="1000"
