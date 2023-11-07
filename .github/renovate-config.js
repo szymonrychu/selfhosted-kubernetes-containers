@@ -1,5 +1,17 @@
 module.exports = {
+  "semanticCommits": "enabled",
+  "extends": ["config:recommended", ":rebaseStalePrs"],
+  "dependencyDashboard": false,
   "dryRun": null,
+  "dependencyDashboard": false,
+  "suppressNotifications": ["prIgnoreNotification"],
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}",
+  "commitMessageSuffix": "",
+  "rebaseWhen": "conflicted",
+  "prConcurrentLimit": 100,
+  "pinDigests": true,
+  "automerge": true,
   "username": "szymonrichert.pl bot",
   "gitAuthor": "szymonrichert.pl bot <bot@szymonrichert.pl>",
   "onboarding": false,
@@ -8,7 +20,7 @@ module.exports = {
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["(^|/)Chart\\.yaml$"],
+      "fileMatch": ["(^|/)Dockerfile$"],
       "matchStrings": [
         "#\\s?renovate: image=(?<depName>.*?)\\s?ARG\\s[\\w+\\_]*\\s?=\\s?\\\"?(?<currentValue>[\\w+\\.\\-]*)"
       ],
@@ -17,19 +29,6 @@ module.exports = {
   ],
   "packageRules": [
     {
-      "description": "lockFileMaintenance",
-      "matchUpdateTypes": [
-        "pin",
-        "digest",
-        "patch",
-        "minor",
-        "major",
-        "lockFileMaintenance"
-      ],
-      "dependencyDashboardApproval": false,
-      "minimumReleaseAge": null
-    },
-    {
       "matchManagers": ["regex"],
       "postUpgradeTasks": {
         "commands": [
@@ -37,6 +36,11 @@ module.exports = {
         ],
         "executionMode": "branch"
       }
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "matchBaseBranches": ["stable"],
+      "enabled": false
     }
   ]
 };
