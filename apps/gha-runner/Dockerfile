@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim@sha256:19664a5752dddba7f59bb460410a0e1887af346e21877fa7cec78bfd3cb77da5
+FROM debian:bullseye-slim@sha256:d5dd14ffead88f6e0cdc4d9b5e8ce7b748e5e0ee9294aa0e566f39f2e85bc55e
 
 # renovate: image=ghcr.io/actions/actions-runner
 ARG RUNNER_VERSION="2.311.0"
