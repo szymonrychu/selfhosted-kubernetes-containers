@@ -16,7 +16,7 @@ module.exports = {
   "gitAuthor": "szymonrichert.pl bot <bot@szymonrichert.pl>",
   "onboarding": false,
   "platform": "github",
-  "repositories": ["szymonrychu/containers"],
+  "repositories": ["szymonrychu/selfhosted-kubernetes-containers"],
   "customManagers": [
     {
       "customType": "regex",
