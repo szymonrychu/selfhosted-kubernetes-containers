@@ -57,9 +57,6 @@ for template_file in templates_files:
     template_contents = None
     with open(template_file) as f:
         template_contents = f.read()
-    
-    if not template_contents:
-        continue
 
     logging.info(f"Loaded template '{template_file}'")
 
