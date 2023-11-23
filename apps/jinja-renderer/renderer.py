@@ -14,6 +14,7 @@ parser.add_argument('-v','--values', nargs='+', help='List of YAML files with K/
 parser.add_argument('-t','--templates-dir', help='Directory where all templates are located', required=True)
 parser.add_argument('-o', '--output-dir', help='Output path', required=True, type=str)
 parser.add_argument('--env-prefix', default='JINJA_', help='Prefix for the env variables', required=False, type=str)
+parser.add_argument('-f', '--replace-files', help='Replace output file if exists', action='store_true', default=False)
 
 args = vars(parser.parse_args())
 
@@ -68,8 +69,11 @@ for template_file in templates_files:
     
     relative_template_path = os.path.relpath(template_file, template_files_root)
     output_path = '.'.join(os.path.join(args['output_dir'], relative_template_path).split('.')[:-1])
-    output_dir = os.path.dirname(output_path)
+    if not args['replace_files'] and os.path.exists(output_path):
+        logging.info(f"Ommiting output file '{output_path}', as it already exists!")
+        continue 
 
+    output_dir = os.path.dirname(output_path)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
         logging.info(f"Created directory '{output_dir}'")
