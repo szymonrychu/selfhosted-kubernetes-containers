@@ -11,7 +11,7 @@ jobs:
     name: Get changes
     runs-on: ubuntu-22.04
     outputs:
-      changed_containers: ${{ steps.changed_files.outputs.all_changed_files }}
+      changed_containers: ${{ steps.changed_containers.outputs.changed_containers }}
     steps:
     - name: Checkout
       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -19,12 +19,15 @@ jobs:
       id: changed_files
       uses: tj-actions/changed-files@25ef3926d147cd02fc7e931c1ef50772bbb0d25d # v40
       with:
-        files: |
-          apps/
         json: true
         escape_json: false
         dir_names: true
         dir_names_max_depth: 2
+    - name: Filter release names
+      id: changed_containers
+      run: |
+        ./.github/filter_paths.py '${{ steps.changed_files.outputs.all_changed_files }}' >> "$GITHUB_OUTPUT"
+
 
   build:
     name: Build
