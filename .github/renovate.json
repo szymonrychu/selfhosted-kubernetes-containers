@@ -24,6 +24,14 @@
         "#\\s?renovate: image=(?<depName>.*?)\\s?ARG\\s[\\w+\\_]*\\s?=\\s?\\\"?(?<currentValue>[\\w+\\.\\-]*)"
       ],
       "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["(^|/)Dockerfile$"],
+      "matchStrings": [
+        "#\\s?renovate: repository=(?<depName>.*?)\\s?ARG\\s[\\w+\\_]*\\s?=\\s?\\\"?(?<currentValue>[\\w+\\.\\-]*)"
+      ],
+      "datasourceTemplate": "github-tags"
     }
   ],
   "packageRules": [
