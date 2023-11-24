@@ -29,20 +29,24 @@ FROM alpine:3.15
 
 COPY --from=qbittorrent-build /usr/local/bin/qbittorrent-nox /usr/bin/qbittorrent-nox
 
+# renovate: repository=https://github.com/wdaan/vuetorrent.git
+ARG VUETORRENT_VERSION=2.2.0
+
 RUN set -ex;\
-    mkdir -p /config /downloads;\
+    mkdir -p /config/qBittorrent /downloads;\
     apk add --no-cache \
         qt6-qtbase \
-        libtorrent-rasterbar
+        libtorrent-rasterbar \
+        curl;\
+    curl -fsSL "https://github.com/wdaan/vuetorrent/releases/download/v${VUETORRENT_VERSION}/vuetorrent.zip" > "/tmp/vuetorrent.zip";\
+    unzip "/tmp/vuetorrent.zip" -d /themes;\
+    rm "/tmp/vuetorrent.zip";\
+    chmod -R u=rwX,go=rX /themes/vuetorrent
 
-COPY entrypoint.sh /entrypoint.sh
-
-EXPOSE 6881 6881/udp 8080
-
-USER qbittorrent
+COPY qBittorrent.conf /config/qBittorrent/qBittorrent.conf
 
 env HOME="/config" \
     XDG_CONFIG_HOME="/config" \
     XDG_DATA_HOME="/config"
 
-CMD ["/entrypoint.sh"]
+CMD ["qbittorrent-nox", "--webui-port=8080"]
