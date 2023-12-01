@@ -5,6 +5,7 @@ COPY requirements.txt /tmp/requirements.txt
 RUN set -xe;\
     apt-get update;\
     apt-get install -y --no-install-recommends \
+        curl \
         python3 \
         python3-pip \
         libopenblas0 \
@@ -18,4 +19,4 @@ RUN set -xe;\
 
 EXPOSE 10400
 
-CMD ["/usr/bin/python3", "-m", "wyoming_openwakeword" ]
+ENTRYPOINT ["/usr/bin/python3", "-m", "wyoming_openwakeword" ]

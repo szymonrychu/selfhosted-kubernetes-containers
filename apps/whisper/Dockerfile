@@ -5,6 +5,7 @@ COPY requirements.txt /tmp/requirements.txt
 RUN set -xe;\
     apt-get update;\
     apt-get install -y --no-install-recommends \
+        curl \
         build-essential \
         python3 \
         python3-dev \
@@ -23,4 +24,4 @@ RUN set -xe;\
 
 EXPOSE 10300
 
-CMD ["/usr/bin/python3", "-m", "wyoming_faster_whisper", "--piper", "/usr/share/piper/piper" ]
+ENTRYPOINT ["/usr/bin/python3", "-m", "wyoming_faster_whisper", "--piper", "/usr/share/piper/piper" ]

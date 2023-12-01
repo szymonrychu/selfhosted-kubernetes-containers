@@ -26,6 +26,6 @@ WORKDIR /
 
 EXPOSE 10200
 
-CMD ["/usr/bin/python3", "-m", "wyoming_piper", "--piper", "/usr/share/piper/piper" ]
+ENTRYPOINT ["/usr/bin/python3", "-m", "wyoming_piper", "--piper", "/usr/share/piper/piper" ]
 
 
