@@ -5,7 +5,6 @@ COPY requirements.txt /tmp/requirements.txt
 RUN set -xe;\
     apt-get update;\
     apt-get install -y --no-install-recommends \
-        curl \
         python3 \
         python3-pip \
         libopenblas0 \
