@@ -23,4 +23,4 @@ RUN set -xe;\
 
 EXPOSE 10300
 
-ENTRYPOINT ["/usr/bin/python3", "-m", "wyoming_faster_whisper", "--piper", "/usr/share/piper/piper" ]
+ENTRYPOINT ["/usr/bin/python3", "-m", "wyoming_faster_whisper" ]
