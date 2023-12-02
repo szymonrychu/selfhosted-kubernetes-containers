@@ -19,7 +19,7 @@ RUN set -xe;\
     rm -rf /var/lib/apt/lists/*;\
     pip3 install --no-cache-dir -r /tmp/requirements.txt;\
     curl -L -s \
-        "https://github.com/rhasspy/piper/releases/download/${PIPER_RELEASE}/piper_linux_aarch64.tar.gz" \
+        "https://github.com/rhasspy/piper/releases/download/${PIPER_RELEASE}/piper_linux_x86_64.tar.gz" \
         | tar -zxvf - -C /usr/share
 
 WORKDIR /
