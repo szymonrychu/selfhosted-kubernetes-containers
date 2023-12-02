@@ -19,14 +19,13 @@ RUN set -xe;\
     rm -rf /var/lib/apt/lists/*;\
     pip3 install --no-cache-dir -r /tmp/requirements.txt;\
     curl -L -s \
-        "https://github.com/rhasspy/piper/archive/refs/tags/${PIPER_RELEASE}.tar.gz" \
-        | tar -zxvf - -C /usr/share;\
-    ln -s /usr/share/piper-${PIPER_RELEASE}/ /usr/share/piper
+        "https://github.com/rhasspy/piper/releases/download/${PIPER_RELEASE}/piper_linux_aarch64.tar.gz" \
+        | tar -zxvf - -C /usr/share
 
 WORKDIR /
 
 EXPOSE 10200
 
-ENTRYPOINT ["/usr/bin/python3", "-m", "wyoming_piper", "--piper", "/usr/share/piper/src/python_run/scripts/piper" ]
+ENTRYPOINT ["/usr/bin/python3", "-m", "wyoming_piper", "--piper", "/usr/share/piper/piper" ]
 
 
