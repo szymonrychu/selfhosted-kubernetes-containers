@@ -1,11 +1,12 @@
-FROM codercom/code-server:4.19.1@sha256:993c381c28a3738b903ac21180f5f9dab8f2aa547bbb0b9d69bea558691e10d3
+FROM ghcr.io/coder/code-server:4.19.1-bullseye
 
 USER root
 
 RUN set -ex;\
     apt-get update;\
     apt-get install -y --no-install-recommends \
-        wget git vim curl jq gnupg zsh sed unzip
+        wget git vim curl jq gnupg zsh sed unzip;\
+    rm -rf /var/lib/apt/lists/*
 
 RUN set -ex;\
     wget -qO /tmp/stern.tar.gz https://github.com/stern/stern/releases/download/v1.22.0/stern_1.22.0_linux_amd64.tar.gz;\
