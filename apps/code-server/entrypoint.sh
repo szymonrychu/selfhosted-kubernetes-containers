@@ -11,7 +11,11 @@ readonly ENTRYPOINTD="${ENTRYPOINTD:=/etc/codeserver.d/}"
 
 groupadd \
     --gid "${USER_GID}" \
-        "${GROUP_NAME}"
+        "${GROUP_NAME}" \
+    || \
+groupmod \
+    --gid "${USER_GID}" \
+        "${GROUP_NAME}" \
 
 useradd \
     --create-home \
