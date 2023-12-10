@@ -22,7 +22,8 @@ RUN set -ex;\
     ;\
     curl -fLo /tmp/coder.deb "https://github.com/coder/code-server/releases/download/v${CODER_VERSION}/code-server_${CODER_VERSION}_amd64.deb";\
     apt-get install -y /tmp/coder.deb;\
-    rm -rf /var/lib/apt/lists/* /tmp/coder.deb
+    rm -rf /var/lib/apt/lists/* /tmp/coder.deb;\
+    mkdir -p /etc/codeserver.d/
 
 ARG STERN_VERSION="1.22.0"
 ARG SOPS_VERSION="1.22.0"
