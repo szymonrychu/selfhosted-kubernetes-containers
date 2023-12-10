@@ -19,6 +19,7 @@ RUN set -ex;\
         sudo \
         python3-pip \
         docker \
+        openssh-client \
     ;\
     curl -fLo /tmp/coder.deb "https://github.com/coder/code-server/releases/download/v${CODER_VERSION}/code-server_${CODER_VERSION}_amd64.deb";\
     apt-get install -y /tmp/coder.deb;\

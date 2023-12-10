@@ -30,6 +30,8 @@ usermod \
     --groups sudo \
         "${USER_NAME}"
 
+sed -i -e 's/%sudo	ALL=(ALL:ALL) ALL/%sudo	ALL=(ALL:ALL) NOPASSWD:ALL/g' /etc/sudoers
+
 if [[ ! -e "${USER_HOME}/.oh-my-zsh" ]]; then
     cp -Rf /root/.oh-my-zsh "${USER_HOME}/"
     chown -R "${USER_UID}:${USER_GID}" "${USER_HOME}/.oh-my-zsh"
