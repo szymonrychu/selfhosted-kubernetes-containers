@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
     - name: Get all test, doc and src files that have changed
       id: changed_files
-      uses: tj-actions/changed-files@1c938490c880156b746568a518594309cfb3f66b # v40
+      uses: tj-actions/changed-files@94549999469dbfa032becf298d95c87a14c34394 # v40
       with:
         json: true
         escape_json: false
