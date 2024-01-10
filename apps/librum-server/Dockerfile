@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy-amd64@sha256:45cd7e2e53ca19d755045c56a0bc13eb1b668ba4add4624b10c0f8a4721f292e as build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy-amd64@sha256:b289746ad5f2a50e8d652249f6379307e4b8024c4d7c47c29e01c8fbefc56413 as build
 
 ARG SERVER_VERSION="96e8cc2e3fd4f181d38f3cc27b5ccb0c2dca3eec"
 SHELL ["/bin/bash", "-exo", "pipefail", "-c"]
