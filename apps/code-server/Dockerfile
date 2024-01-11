@@ -1,4 +1,4 @@
-FROM debian:bookworm@sha256:bac353db4cc04bc672b14029964e686cd7bad56fe34b51f432c1a1304b9928da
+FROM debian:bookworm@sha256:b16cef8cbcb20935c0f052e37fc3d38dc92bfec0bcfb894c328547f81e932d67
 
 # renovate: repository=https://github.com/coder/code-server
 ARG CODER_VERSION="4.19.1"
