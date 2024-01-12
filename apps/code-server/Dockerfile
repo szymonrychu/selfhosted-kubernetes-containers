@@ -57,7 +57,9 @@ RUN wget -qO /tmp/stern.tar.gz "https://github.com/stern/stern/releases/download
     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash;\
     helm plugin install https://github.com/databus23/helm-diff;\
     helm plugin install https://github.com/jkroepke/helm-secrets;\
-    curl -s https://api.github.com/repos/helmfile/helmfile/releases/latest |  jq -r '.assets[] | .browser_download_url' | grep 'linux_amd64' | xargs wget -qO /usr/local/bin/helmfile;\
+    curl -s https://api.github.com/repos/helmfile/helmfile/releases/latest |  jq -r '.assets[] | .browser_download_url' | grep 'linux_amd64' | xargs wget -qO /tmp/helmfile.tar.gz;\
+    cd /tmp/;tar -xvzf /tmp/helmfile.tar.gz; cd -;\
+    mv /tmp/helmfile /usr/local/bin/helmfile;\
     chmod a+x /usr/local/bin/helmfile;\
     wget -qO /tmp/terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip";\
     unzip /tmp/terraform.zip;\
