@@ -40,8 +40,6 @@ RUN set -ex;\
 ARG STERN_VERSION="1.22.0"
 ARG SOPS_VERSION="1.22.0"
 ARG SOPS_VERSION="3.7.3"
-ARG HELM_DIFF_VERSION="3.6.0"
-ARG HELM_SECRETS_VERSION="3.15.0"
 ARG TERRAFORM_VERSION="1.2.2"
 
 RUN wget -qO /tmp/stern.tar.gz "https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz";\
@@ -57,9 +55,9 @@ RUN wget -qO /tmp/stern.tar.gz "https://github.com/stern/stern/releases/download
     ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx;\
     ln -s /opt/kubectx/kubens /usr/local/bin/kubens;\
     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash;\
-    helm plugin install --version "v${HELM_DIFF_VERSION}" https://github.com/databus23/helm-diff;\
-    helm plugin install --version "v${HELM_SECRETS_VERSION}" https://github.com/jkroepke/helm-secrets;\
-    curl -s https://api.github.com/repos/roboll/helmfile/releases/latest |  jq -r '.assets[] | .browser_download_url' | grep 'linux_amd64' | xargs wget -qO /usr/local/bin/helmfile;\
+    helm plugin install https://github.com/databus23/helm-diff;\
+    helm plugin install https://github.com/jkroepke/helm-secrets;\
+    curl -s https://api.github.com/repos/helmfile/helmfile/releases/latest |  jq -r '.assets[] | .browser_download_url' | grep 'linux_amd64' | xargs wget -qO /usr/local/bin/helmfile;\
     chmod a+x /usr/local/bin/helmfile;\
     wget -qO /tmp/terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip";\
     unzip /tmp/terraform.zip;\
