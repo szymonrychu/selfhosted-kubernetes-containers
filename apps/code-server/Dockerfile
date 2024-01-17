@@ -2,6 +2,7 @@ FROM debian:bookworm@sha256:b16cef8cbcb20935c0f052e37fc3d38dc92bfec0bcfb894c3285
 
 # renovate: repository=https://github.com/coder/code-server
 ARG CODER_VERSION="4.19.1"
+ENV PIP_BREAK_SYSTEM_PACKAGES="1"
 
 RUN set -ex;\
     apt-get update;\
