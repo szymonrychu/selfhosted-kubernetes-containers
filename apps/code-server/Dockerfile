@@ -65,7 +65,8 @@ RUN wget -qO /tmp/stern.tar.gz "https://github.com/stern/stern/releases/download
     unzip /tmp/terraform.zip;\
     rm /tmp/terraform.zip;\
     mv terraform /usr/local/bin/terraform;\
-    rm -rf /tmp/*
+    rm -rf /tmp/*;\
+    pip3 install pre-commit
 
 RUN set -xe;\
     sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)";\
