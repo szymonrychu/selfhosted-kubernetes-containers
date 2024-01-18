@@ -35,8 +35,8 @@ sed -i -e 's/%sudo	ALL=(ALL:ALL) ALL/%sudo	ALL=(ALL:ALL) NOPASSWD:ALL/g' /etc/su
 if [[ ! -e "${USER_HOME}/.oh-my-zsh" ]]; then
     cp -Rf /root/.oh-my-zsh "${USER_HOME}/"
     chown -R "${USER_UID}:${USER_GID}" "${USER_HOME}/.oh-my-zsh"
-    compaudit | xargs chmod g-w,o-w
 fi
+chmod 0640 /home/szymonri/.oh-my-zsh
 
 if [[ ! -e "${USER_HOME}/.zshrc" ]]; then
     cp -Rf /root/.zshrc "${USER_HOME}/"
