@@ -37,6 +37,13 @@ if [[ ! -e "${USER_HOME}/.oh-my-zsh" ]]; then
     chmod g-w,o-w ${USER_HOME}/.oh-my-zsh
     chown -R "${USER_UID}:${USER_GID}" "${USER_HOME}/.oh-my-zsh"
 fi
+su - "${USER_NAME}" -c "chmod g-w,o-w /home/${USER_NAME}/.oh-my-zsh"
+
+if [[ ! -e "${USER_HOME}/.local/share/helm" ]]; then
+    mkdir -p "${USER_HOME}/.local/share"
+    cp -Rf /root/.local/share/helm "${USER_HOME}/.local/share/"
+    chown -R "${USER_UID}:${USER_GID}" "${USER_HOME}/.local/share/helm"
+fi
 
 if [[ ! -e "${USER_HOME}/.zshrc" ]]; then
     cp -Rf /root/.zshrc "${USER_HOME}/"
@@ -44,7 +51,7 @@ if [[ ! -e "${USER_HOME}/.zshrc" ]]; then
 fi
 
 if [[ -d "${ENTRYPOINTD}" ]]; then
-  find "${ENTRYPOINTD}" -type f -executable -print -exec {} \;
+    find "${ENTRYPOINTD}" -type f -executable -print -exec {} \;
 fi
 
 su - "${USER_NAME}" -- "/usr/bin/code-server" --auth none --bind-addr "0.0.0.0:${CODER_PORT}"
