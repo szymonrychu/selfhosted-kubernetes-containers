@@ -69,6 +69,7 @@ RUN wget -qO /tmp/stern.tar.gz "https://github.com/stern/stern/releases/download
     rm -rf /tmp/*;\
     pip3 install pre-commit
 
+
 RUN set -xe;\
     sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)";\
     mkdir -p /root/.oh-my-zsh/completions;\
@@ -79,5 +80,6 @@ RUN set -xe;\
     echo 'source <(stern --completion=zsh)' >> /root/.zshrc
 
 COPY entrypoint.sh /entrypoint.sh
+COPY 00-setup-zsh.sh /etc/codeserver.d/00-setup-zsh.sh
 
 CMD [ "/entrypoint.sh" ]
