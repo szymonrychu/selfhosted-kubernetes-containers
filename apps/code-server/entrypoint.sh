@@ -36,4 +36,4 @@ if [[ -d "${ENTRYPOINTD}" ]]; then
   find "${ENTRYPOINTD}" -type f -executable -print -exec su - "${USER_NAME}" -c '{}' \;
 fi
 
-su - "${USER_NAME}" -- "/usr/bin/code-server" --auth none --bind-addr "0.0.0.0:${CODER_PORT}"
+su -p - "${USER_NAME}" -- "/usr/bin/code-server" --auth none --bind-addr "0.0.0.0:${CODER_PORT}"
