@@ -33,7 +33,7 @@ usermod \
 sed -i -e 's/%sudo	ALL=(ALL:ALL) ALL/%sudo	ALL=(ALL:ALL) NOPASSWD:ALL/g' /etc/sudoers
 
 if [[ -d "${ENTRYPOINTD}" ]]; then
-  find "${ENTRYPOINTD}" -type f -executable -print -exec su - "${USER_NAME}" -c '{}' \;
+  find "${ENTRYPOINTD}" -type f -executable -print -exec su -p - "${USER_NAME}" -c '{}' \;
 fi
 
-su -p - "${USER_NAME}" -- "/usr/bin/code-server" --auth none --bind-addr "0.0.0.0:${CODER_PORT}"
+su - "${USER_NAME}" -- "/usr/bin/code-server" --auth none --bind-addr "0.0.0.0:${CODER_PORT}"
