@@ -80,6 +80,5 @@ RUN set -xe;\
     echo 'source <(stern --completion=zsh)' >> /root/.zshrc
 
 COPY entrypoint.sh /entrypoint.sh
-COPY 00-setup-zsh.sh /etc/codeserver.d/00-setup-zsh.sh
 
 CMD [ "/entrypoint.sh" ]
