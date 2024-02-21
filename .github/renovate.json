@@ -2,8 +2,6 @@
   "semanticCommits": "enabled",
   "extends": ["config:recommended", ":rebaseStalePrs"],
   "dependencyDashboard": false,
-  "dryRun": null,
-  "suppressNotifications": ["prIgnoreNotification"],
   "commitMessageTopic": "{{depName}}",
   "commitMessageExtra": "to {{newVersion}}",
   "commitMessageSuffix": "",
@@ -11,11 +9,7 @@
   "prConcurrentLimit": 100,
   "pinDigests": true,
   "automerge": true,
-  "username": "szymonrichert.pl bot",
   "gitAuthor": "szymonrichert.pl bot <bot@szymonrichert.pl>",
-  "onboarding": false,
-  "platform": "github",
-  "repositories": ["szymonrychu/selfhosted-kubernetes-containers"],
   "customManagers": [
     {
       "customType": "regex",
@@ -45,9 +39,16 @@
       }
     },
     {
+      "description": "MinorAutoUpgrade",
+      "matchUpdateTypes": ["pin", "digest", "patch", "minor"],
+      "minimumReleaseAge": null,
+      "labels": ["automerge"],
+      "suppressNotifications": ["prIgnoreNotification", "prEditedNotification"]
+    },
+    {
+      "description": "MajorUpgrade",
       "matchUpdateTypes": ["major"],
-      "matchBaseBranches": ["stable"],
-      "enabled": false
+      "minimumReleaseAge": "7 days"
     }
   ]
 }
