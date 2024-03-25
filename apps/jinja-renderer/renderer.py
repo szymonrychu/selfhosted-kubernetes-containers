@@ -58,6 +58,10 @@ for template_file in templates_files:
     with open(template_file) as f:
         template_contents = f.read()
 
+    file_replace = '### RENDERER_REPLACE_DESTINATION ###' == template_contents.split('\n')[0]
+    if file_replace:
+        template_contents = '\n'.join(template_contents.split('\n')[1:])
+
     logging.info(f"Loaded template '{template_file}'")
 
     environment = jinja2.Environment()
@@ -66,7 +70,7 @@ for template_file in templates_files:
     
     relative_template_path = os.path.relpath(template_file, template_files_root)
     output_path = '.'.join(os.path.join(args['output_dir'], relative_template_path).split('.')[:-1])
-    if not args['replace_files'] and os.path.exists(output_path):
+    if os.path.exists(output_path) and not (args['replace_files'] or file_replace):
         logging.info(f"Ommiting output file '{output_path}', as it already exists!")
         continue 
 
