@@ -1,7 +1,7 @@
 FROM debian:bullseye-slim@sha256:a165446a88794db4fec31e35e9441433f9552ae048fb1ed26df352d2b537cb96
 
 # renovate: image=ghcr.io/actions/actions-runner
-ARG RUNNER_VERSION="2.314.1"
+ARG RUNNER_VERSION="2.315.0"
 
 RUN set -xe;\
     apt-get update; \
