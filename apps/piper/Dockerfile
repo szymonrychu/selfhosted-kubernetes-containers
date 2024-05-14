@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim@sha256:715354035496a48b9c4c8f146a6f751de70449913773038776eb1f3d01c93989
+FROM debian:bullseye-slim@sha256:0e75382930ceb533e2f438071307708e79dc86d9b8e433cc6dd1a96872f2651d
 
 # renovate: repository=https://github.com/rhasspy/piper.git
 ARG PIPER_RELEASE='2023.11.14-2'
