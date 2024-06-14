@@ -1,4 +1,4 @@
-FROM python:3.12.4-bookworm@sha256:23155f230e6f43ecb0670dc680feb3271d96b9ce99fe82b051bf7b668755e2ef
+FROM python:3.12.4-bookworm@sha256:69b5ed7edb7c70b0175a5099eccc86ceb5c0fe39ff94384403ceebc26de7f80e
 
 COPY requirements.txt /requirements.txt
 
