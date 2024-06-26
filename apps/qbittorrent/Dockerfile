@@ -11,7 +11,6 @@ RUN set -ex;\
         g++ \
         libtorrent-rasterbar-dev \
         cmake \
-        libexecinfo-dev \
         boost-dev \
         ninja;\
     cd /tmp;\
