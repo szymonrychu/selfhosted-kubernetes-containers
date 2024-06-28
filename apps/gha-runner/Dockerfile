@@ -1,17 +1,17 @@
 FROM debian:bullseye-slim@sha256:acc5810124f0929ab44fc7913c0ad936b074cbd3eadf094ac120190862ba36c4
 
 # renovate: image=ghcr.io/actions/actions-runner
-ENV RUNNER_VERSION="2.317.0"
-# renovate: repository=github.com/getsops/sops
-ENV SOPS_VERSION=v3.9.0
-# renovate: repository=ghcr.io/hashicorp/terraform
-ENV TERRAFORM_VERSION=1.9.0
-# renovate: repository=ghcr.io/gruntwork-io/terragrunt
-ENV TERRAGRUNT_VERSION=v0.59.6
-# renovate: repository=github.com/databus23/helm-diff
-ENV HELM_DIFF_VERSION=v3.9.8
-# renovate: repository=github.com/jkroepke/helm-secrets
-ENV HELM_SECRETS_VERSION=v4.6.0
+ARG RUNNER_VERSION="2.317.0"
+# renovate: repository=getsops/sops
+ARG SOPS_VERSION=v3.9.0
+# renovate: repository=hashicorp/terraform
+ARG TERRAFORM_VERSION=1.8.2
+# renovate: repository=gruntwork-io/terragrunt
+ARG TERRAGRUNT_VERSION=v0.59.6
+# renovate: repository=databus23/helm-diff
+ARG HELM_DIFF_VERSION=v3.9.8
+# renovate: repository=jkroepke/helm-secrets
+ARG HELM_SECRETS_VERSION=v4.6.0
 
 RUN set -xe;\
     apt-get update; \
@@ -43,7 +43,7 @@ RUN set -xe;\
     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash;\
     curl -s https://api.github.com/repos/roboll/helmfile/releases/latest |  jq -r '.assets[] | .browser_download_url' | grep 'linux_amd64' | xargs wget -qO /usr/local/bin/helmfile;\
     chmod a+x /usr/local/bin/helmfile;\
-    wget -qO /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64;\
+    wget -qO /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64;\
     chmod a+x /usr/local/bin/terragrunt;\
     wget -qO /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip;\
     unzip /tmp/terraform.zip;\

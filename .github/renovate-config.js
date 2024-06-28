@@ -3,6 +3,7 @@ module.exports = {
   "commitMessageExtra": "to {{newVersion}}",
   "commitMessageSuffix": "",
   "commitMessageTopic": "{{depName}}",
+  "allowedPostUpgradeCommands": [".*"],
   "dependencyDashboard": false,
   "dryRun": null,
   "extends": ["config:recommended", ":rebaseStalePrs"],
