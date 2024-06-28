@@ -1,6 +1,6 @@
-FROM alpine:3.15@sha256:19b4bcc4f60e99dd5ebdca0cbce22c503bbcff197549d7e19dab4f22254dc864 as qbittorrent-build
+FROM alpine:3.20@sha256:b89d9c93e9ed3597455c90a0b88a8bbb5cb7188438f70953fede212a0c4394e0 as qbittorrent-build
 
-# renovate: repository=https://github.com/qbittorrent/qBittorrent.git
+# renovate: repository=qbittorrent/qBittorrent.git
 ARG QBITTORRENT_VERSION=release-4.6.1
 
 # Install dependencies
@@ -11,7 +11,6 @@ RUN set -ex;\
         g++ \
         libtorrent-rasterbar-dev \
         cmake \
-        libexecinfo-dev \
         boost-dev \
         ninja;\
     cd /tmp;\
@@ -25,11 +24,11 @@ RUN set -ex;\
     cmake --build build-nox -j$(nproc);\
     cmake --install build-nox
 
-FROM alpine:3.15@sha256:19b4bcc4f60e99dd5ebdca0cbce22c503bbcff197549d7e19dab4f22254dc864
+FROM alpine:3.20@sha256:b89d9c93e9ed3597455c90a0b88a8bbb5cb7188438f70953fede212a0c4394e0
 
 COPY --from=qbittorrent-build /usr/local/bin/qbittorrent-nox /usr/bin/qbittorrent-nox
 
-# renovate: repository=https://github.com/wdaan/vuetorrent.git
+# renovate: repository=wdaan/vuetorrent.git
 ARG VUETORRENT_VERSION=2.2.0
 
 RUN set -ex;\
