@@ -1,7 +1,17 @@
 FROM debian:bullseye-slim@sha256:acc5810124f0929ab44fc7913c0ad936b074cbd3eadf094ac120190862ba36c4
 
 # renovate: image=ghcr.io/actions/actions-runner
-ARG RUNNER_VERSION="2.317.0"
+ENV RUNNER_VERSION="2.317.0"
+# renovate: repository=github.com/getsops/sops
+ENV SOPS_VERSION=v3.9.0
+# renovate: repository=ghcr.io/hashicorp/terraform
+ENV TERRAFORM_VERSION=1.9.0
+# renovate: repository=ghcr.io/gruntwork-io/terragrunt
+ENV TERRAGRUNT_VERSION=v0.59.6
+# renovate: repository=github.com/databus23/helm-diff
+ENV HELM_DIFF_VERSION=v3.9.8
+# renovate: repository=github.com/jkroepke/helm-secrets
+ENV HELM_SECRETS_VERSION=v4.6.0
 
 RUN set -xe;\
     apt-get update; \
@@ -24,7 +34,7 @@ RUN set -xe;\
     useradd -m github;\
     usermod -aG sudo github;\
     echo "%sudo ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers;\
-    wget -qO /usr/local/bin/sops https://github.com/mozilla/sops/releases/download/v3.7.3/sops-v3.7.3.linux.amd64;\
+    wget -qO /usr/local/bin/sops https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux.amd64;\
     chmod a+x /usr/local/bin/sops;\
     wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64;\
     chmod a+x /usr/local/bin/yq;\
@@ -33,9 +43,9 @@ RUN set -xe;\
     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash;\
     curl -s https://api.github.com/repos/roboll/helmfile/releases/latest |  jq -r '.assets[] | .browser_download_url' | grep 'linux_amd64' | xargs wget -qO /usr/local/bin/helmfile;\
     chmod a+x /usr/local/bin/helmfile;\
-    wget -qO /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.37.4/terragrunt_linux_amd64;\
+    wget -qO /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64;\
     chmod a+x /usr/local/bin/terragrunt;\
-    wget -qO /tmp/terraform.zip https://releases.hashicorp.com/terraform/1.2.2/terraform_1.2.2_linux_amd64.zip;\
+    wget -qO /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip;\
     unzip /tmp/terraform.zip;\
     rm /tmp/terraform.zip;\
     mv terraform /usr/local/bin/terraform
@@ -46,10 +56,10 @@ WORKDIR /home/github
 COPY --chown=github:github entrypoint.sh ./entrypoint.sh
 
 RUN set -xe;\
-    helm plugin install --version v3.6.0 https://github.com/databus23/helm-diff;\
-    helm plugin install --version v3.15.0 https://github.com/jkroepke/helm-secrets;\
-    curl -O -L https://github.com/actions/runner/releases/download/v$RUNNER_VERSION/actions-runner-linux-x64-$RUNNER_VERSION.tar.gz;\
-    tar xzf ./actions-runner-linux-x64-$RUNNER_VERSION.tar.gz;\
+    helm plugin install --version ${HELM_DIFF_VERSION} https://github.com/databus23/helm-diff;\
+    helm plugin install --version ${HELM_SECRETS_VERSION} https://github.com/jkroepke/helm-secrets;\
+    curl -O -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz;\
+    tar xzf ./actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz;\
     sudo ./bin/installdependencies.sh;\
     sudo chmod u+x ./entrypoint.sh
 
