@@ -9,7 +9,7 @@ ARG TERRAFORM_VERSION=1.9.0
 # renovate: repository=gruntwork-io/terragrunt
 ARG TERRAGRUNT_VERSION=v0.59.6
 # renovate: repository=databus23/helm-diff
-ARG HELM_DIFF_VERSION=v3.9.8
+ARG HELM_DIFF_VERSION=v3.9.9
 # renovate: repository=jkroepke/helm-secrets
 ARG HELM_SECRETS_VERSION=v4.6.0
 
