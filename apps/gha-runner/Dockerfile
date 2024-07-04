@@ -12,6 +12,8 @@ ARG TERRAGRUNT_VERSION=v0.59.6
 ARG HELM_DIFF_VERSION=v3.9.8
 # renovate: repository=jkroepke/helm-secrets
 ARG HELM_SECRETS_VERSION=v4.6.0
+# renovate: repository=helmfile/helmfile
+ARG HELMFILE_VERSION=0.166.0
 
 RUN set -xe;\
     apt-get update; \
@@ -41,14 +43,16 @@ RUN set -xe;\
     wget -qO /usr/local/bin/kubectl "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl";\
     chmod a+x /usr/local/bin/kubectl;\
     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash;\
-    curl -s https://api.github.com/repos/roboll/helmfile/releases/latest |  jq -r '.assets[] | .browser_download_url' | grep 'linux_amd64' | xargs wget -qO /usr/local/bin/helmfile;\
-    chmod a+x /usr/local/bin/helmfile;\
+    wget -qO /tmp/helmfile.tar.gz https://github.com/helmfile/helmfile/releases/download/v${HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION}_linux_amd64.tar.gz;\
+    tar -xzf /tmp/helmfile.tar.gz -C /tmp/;\
+    mv /tmp/helmfile /usr/local/bin/helmfile;\
     wget -qO /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64;\
     chmod a+x /usr/local/bin/terragrunt;\
     wget -qO /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip;\
     unzip /tmp/terraform.zip;\
     rm /tmp/terraform.zip;\
-    mv terraform /usr/local/bin/terraform
+    mv terraform /usr/local/bin/terraform;\
+    rm -rf /tmp/*
 
 USER github
 WORKDIR /home/github
