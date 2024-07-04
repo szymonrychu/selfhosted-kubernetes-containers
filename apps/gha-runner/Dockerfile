@@ -1,15 +1,15 @@
-FROM debian:bullseye-slim@sha256:acc5810124f0929ab44fc7913c0ad936b074cbd3eadf094ac120190862ba36c4
+FROM debian:bullseye-slim@sha256:34b63f55a4b193ad03c5ddb4b3f8546c797763ed708f0df5309ecb9507d15179
 
 # renovate: image=ghcr.io/actions/actions-runner
 ARG RUNNER_VERSION="2.317.0"
 # renovate: repository=getsops/sops
 ARG SOPS_VERSION=v3.9.0
 # renovate: repository=hashicorp/terraform
-ARG TERRAFORM_VERSION=1.8.2
+ARG TERRAFORM_VERSION=1.9.1
 # renovate: repository=gruntwork-io/terragrunt
 ARG TERRAGRUNT_VERSION=v0.59.6
 # renovate: repository=databus23/helm-diff
-ARG HELM_DIFF_VERSION=v3.9.8
+ARG HELM_DIFF_VERSION=v3.9.9
 # renovate: repository=jkroepke/helm-secrets
 ARG HELM_SECRETS_VERSION=v4.6.0
 # renovate: repository=helmfile/helmfile
