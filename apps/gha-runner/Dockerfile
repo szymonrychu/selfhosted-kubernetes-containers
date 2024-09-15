@@ -1,19 +1,19 @@
 FROM debian:bullseye-slim@sha256:b257e5e831aa9949737638f6d323cd563347b2a5571d98b9b15eef0c7cd80b68
 
 # renovate: image=ghcr.io/actions/actions-runner
-ARG RUNNER_VERSION="2.317.0"
+ARG RUNNER_VERSION="2.319.1"
 # renovate: repository=getsops/sops
 ARG SOPS_VERSION=v3.9.0
 # renovate: repository=hashicorp/terraform
-ARG TERRAFORM_VERSION=1.9.2
+ARG TERRAFORM_VERSION=1.9.5
 # renovate: repository=gruntwork-io/terragrunt
-ARG TERRAGRUNT_VERSION=v0.63.2
+ARG TERRAGRUNT_VERSION=v0.67.4
 # renovate: repository=databus23/helm-diff
-ARG HELM_DIFF_VERSION=v3.9.9
+ARG HELM_DIFF_VERSION=v3.9.10
 # renovate: repository=jkroepke/helm-secrets
-ARG HELM_SECRETS_VERSION=v4.6.0
+ARG HELM_SECRETS_VERSION=v4.6.1
 # renovate: repository=helmfile/helmfile
-ARG HELMFILE_VERSION=0.166.0
+ARG HELMFILE_VERSION=0.168.0
 
 RUN set -xe;\
     apt-get update; \
