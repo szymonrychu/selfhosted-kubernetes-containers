@@ -3,7 +3,7 @@ FROM debian:bullseye-slim@sha256:3f9e53602537cc817d96f0ebb131a39bdb16fa8b4221376
 # renovate: image=ghcr.io/actions/actions-runner
 ARG RUNNER_VERSION="2.319.1"
 # renovate: repository=getsops/sops
-ARG SOPS_VERSION=v3.9.0
+ARG SOPS_VERSION=v3.9.1
 # renovate: repository=hashicorp/terraform
 ARG TERRAFORM_VERSION=1.9.7
 # renovate: repository=gruntwork-io/terragrunt
