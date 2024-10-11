@@ -33,7 +33,7 @@
       "matchManagers": ["regex"],
       "postUpgradeTasks": {
         "commands": [
-          "version=$(cat {{{parentDir}}}/VERSION | awk '{print $2}')\n            major=$(echo $version | cut -d. -f1)\n            minor=$(echo $version | cut -d. -f2)\n            patch=$(echo $version | cut -d. -f3)\n            minor=$(expr $minor + 1)\n            echo \"Replacing $version with $major.$minor.$patch\"\n            echo \"$major.$minor.$patch\" > {{{parentDir}}}/VERSION\n            cat {{{parentDir}}}/VERSION\n            "
+          "version=$(cat apps/{{{parentDir}}}/VERSION | awk '{print $2}')\n            major=$(echo $version | cut -d. -f1)\n            minor=$(echo $version | cut -d. -f2)\n            patch=$(echo $version | cut -d. -f3)\n            minor=$(expr $minor + 1)\n            echo \"Replacing $version with $major.$minor.$patch\"\n            echo \"$major.$minor.$patch\" > apps/{{{parentDir}}}/VERSION\n            cat apps/{{{parentDir}}}/VERSION\n            "
         ],
         "executionMode": "branch"
       }
