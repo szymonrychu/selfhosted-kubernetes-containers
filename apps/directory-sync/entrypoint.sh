@@ -24,8 +24,9 @@ _term() {
 
 trap _term SIGTERM
 
+cd "${source_dir}"
 while inotifywait -r -e modify,create,delete,move "${source_dir}"; do
     touch "${lockfile_path}"
-    rsync -avz "${source_dir}" "${destination_dir}"
+    rsync -avz . "${destination_dir}"
     rm "${lockfile_path}"
 done
