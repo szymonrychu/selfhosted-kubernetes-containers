@@ -14,6 +14,18 @@ if [[ -z "${destination_dir}" ]]; then
   exit 1
 fi
 
+readonly lockfile_path="${LOCKFILE_PATH:-/.lock}"
+
+_term() {
+  while [[ -f "${lockfile_path}" ]]; do
+    sleep 1
+  done
+}
+
+trap _term SIGTERM
+
 while inotifywait -r -e modify,create,delete,move "${source_dir}"; do
+    touch "${lockfile_path}"
     rsync -avz "${source_dir}" "${destination_dir}"
+    rm "${lockfile_path}"
 done
