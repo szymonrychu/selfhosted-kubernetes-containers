@@ -20,6 +20,9 @@ _term() {
   while [[ -f "${lockfile_path}" ]]; do
     sleep 1
   done
+  
+  cd "${source_dir}"
+  rsync -avhz --delete . "${destination_dir}"
 }
 
 trap _term SIGTERM
