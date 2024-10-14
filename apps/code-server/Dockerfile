@@ -47,7 +47,7 @@ ARG TERRAGRUNT_VERSION=v0.68.1
 # renovate: repository=databus23/helm-diff
 ARG HELM_DIFF_VERSION=v3.9.11
 # renovate: repository=jkroepke/helm-secrets
-ARG HELM_SECRETS_VERSION=v4.6.1
+ARG HELM_SECRETS_VERSION=v4.6.2
 # renovate: repository=helmfile/helmfile
 ARG HELMFILE_VERSION=0.168.0
 
