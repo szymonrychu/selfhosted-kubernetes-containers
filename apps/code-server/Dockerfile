@@ -1,7 +1,7 @@
 FROM debian:bookworm@sha256:e11072c1614c08bf88b543fcfe09d75a0426d90896408e926454e88078274fcb
 
 # renovate: repository=coder/code-server
-ARG CODER_VERSION="4.93.1"
+ARG CODER_VERSION="4.95.1"
 ENV PIP_BREAK_SYSTEM_PACKAGES="1"
 
 RUN set -ex;\
