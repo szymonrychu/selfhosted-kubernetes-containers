@@ -1,7 +1,7 @@
-FROM debian:bookworm@sha256:e11072c1614c08bf88b543fcfe09d75a0426d90896408e926454e88078274fcb
+FROM debian:bookworm@sha256:10901ccd8d249047f9761845b4594f121edef079cfd8224edebd9ea726f0a7f6
 
 # renovate: repository=coder/code-server
-ARG CODER_VERSION="4.95.1"
+ARG CODER_VERSION="4.95.3"
 ENV PIP_BREAK_SYSTEM_PACKAGES="1"
 
 RUN set -ex;\
@@ -41,11 +41,11 @@ RUN set -ex;\
 # renovate: repository=getsops/sops
 ARG SOPS_VERSION=v3.9.1
 # renovate: repository=hashicorp/terraform
-ARG TERRAFORM_VERSION=1.9.8
+ARG TERRAFORM_VERSION=1.10.0
 # renovate: repository=gruntwork-io/terragrunt
-ARG TERRAGRUNT_VERSION=v0.68.7
+ARG TERRAGRUNT_VERSION=v0.69.2
 # renovate: repository=databus23/helm-diff
-ARG HELM_DIFF_VERSION=v3.9.11
+ARG HELM_DIFF_VERSION=v3.9.12
 # renovate: repository=jkroepke/helm-secrets
 ARG HELM_SECRETS_VERSION=v4.6.2
 # renovate: repository=helmfile/helmfile
