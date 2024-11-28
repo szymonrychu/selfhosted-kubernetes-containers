@@ -33,7 +33,7 @@
       "matchManagers": ["regex"],
       "postUpgradeTasks": {
         "commands": [
-          "version=$(cat apps/{{{parentDir}}}/VERSION | awk '{print $2}')\n            major=$(echo $version | cut -d. -f1)\n            minor=$(echo $version | cut -d. -f2)\n            patch=$(echo $version | cut -d. -f3)\n            minor=$(expr $minor + 1)\n            echo \"Replacing $version with $major.$minor.$patch\"\n            echo \"$major.$minor.$patch\" > apps/{{{parentDir}}}/VERSION\n            cat apps/{{{parentDir}}}/VERSION\n            "
+          "./.github/bump_version.sh {{{parentDir}}}"
         ],
         "executionMode": "branch"
       }
