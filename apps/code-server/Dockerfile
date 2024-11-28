@@ -41,7 +41,7 @@ RUN set -ex;\
 # renovate: repository=getsops/sops
 ARG SOPS_VERSION=v3.9.1
 # renovate: repository=hashicorp/terraform
-ARG TERRAFORM_VERSION=1.9.8
+ARG TERRAFORM_VERSION=1.10.0
 # renovate: repository=gruntwork-io/terragrunt
 ARG TERRAGRUNT_VERSION=v0.69.2
 # renovate: repository=databus23/helm-diff
