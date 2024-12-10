@@ -49,7 +49,7 @@ ARG HELM_DIFF_VERSION=v3.9.12
 # renovate: repository=jkroepke/helm-secrets
 ARG HELM_SECRETS_VERSION=v4.6.2
 # renovate: repository=helmfile/helmfile
-ARG HELMFILE_VERSION=0.169.1
+ARG HELMFILE_VERSION=0.169.2
 
 RUN wget -qO /tmp/stern.tar.gz "https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz";\
     cd /tmp/;tar -xvzf /tmp/stern.tar.gz; cd -;\
