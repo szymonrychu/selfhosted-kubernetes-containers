@@ -1,4 +1,4 @@
-FROM alpine:3.20@sha256:780405de0f7cf99f985dd5a4f04dfc5aae71509d89505c1ba48a88d95a0ceb7f as qbittorrent-build
+FROM alpine:3.20@sha256:31687a2fdd021f85955bf2d0c2682e9c0949827560e1db546358ea094f740f12 as qbittorrent-build
 
 # renovate: repository=qbittorrent/qBittorrent.git
 ARG QBITTORRENT_VERSION=release-4.6.1
@@ -24,7 +24,7 @@ RUN set -ex;\
     cmake --build build-nox -j$(nproc);\
     cmake --install build-nox
 
-FROM alpine:3.20@sha256:780405de0f7cf99f985dd5a4f04dfc5aae71509d89505c1ba48a88d95a0ceb7f
+FROM alpine:3.20@sha256:31687a2fdd021f85955bf2d0c2682e9c0949827560e1db546358ea094f740f12
 
 COPY --from=qbittorrent-build /usr/local/bin/qbittorrent-nox /usr/bin/qbittorrent-nox
 
