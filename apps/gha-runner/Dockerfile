@@ -13,7 +13,7 @@ ARG HELM_DIFF_VERSION=v3.9.14
 # renovate: repository=jkroepke/helm-secrets
 ARG HELM_SECRETS_VERSION=v4.6.2
 # renovate: repository=helmfile/helmfile
-ARG HELMFILE_VERSION=0.169.2
+ARG HELMFILE_VERSION=0.170.0
 
 RUN set -xe;\
     apt-get update; \
