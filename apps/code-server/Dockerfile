@@ -50,8 +50,11 @@ ARG HELM_DIFF_VERSION=v3.9.14
 ARG HELM_SECRETS_VERSION=v4.6.2
 # renovate: repository=helmfile/helmfile
 ARG HELMFILE_VERSION=0.170.1
+# renovate: repository=stern/stern
+ARG STERN_VERSION=1.32.0
 
-RUN wget -qO /tmp/stern.tar.gz "https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz";\
+RUN set -ex;\
+    wget -qO /tmp/stern.tar.gz "https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz";\
     cd /tmp/;tar -xvzf /tmp/stern.tar.gz; cd -;\
     mv /tmp/stern /usr/local/bin/stern;\
     wget -qO /usr/local/bin/sops https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux.amd64;\
@@ -79,15 +82,27 @@ RUN wget -qO /tmp/stern.tar.gz "https://github.com/stern/stern/releases/download
     rm -rf /tmp/*;\
     pip3 install pre-commit
 
+ARG GROUP_NAME="user" \
+    USER_NAME="user" \
+    USER_UID="1000" \
+    USER_GID="1000"
 
-RUN set -xe;\
+RUN set -ex;\
+    groupadd --gid "${USER_GID}" "${GROUP_NAME}";\
+    useradd --create-home --home-dir "/home/${USER_NAME}" --uid "${USER_UID}" --shell /usr/bin/zsh --gid "${USER_GID}" "${USER_NAME}";\
+    sed -i -e 's/%sudo	ALL=(ALL:ALL) ALL/%sudo	ALL=(ALL:ALL) NOPASSWD:ALL/g' /etc/sudoers
+
+USER $USER_NAME
+
+RUN set -ex;\
     sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)";\
-    mkdir -p /root/.oh-my-zsh/completions;\
-    ln -s /opt/kubectx/completion/_kubectx.zsh /root/.oh-my-zsh/completions/_kubectx.zsh;\
-    ln -s /opt/kubectx/completion/_kubens.zsh /root/.oh-my-zsh/completions/_kubens.zsh;\
-    echo 'source <(helm completion zsh)' >> /root/.zshrc;\
-    wget -qO /root/.oh-my-zsh/completions/_helmfile.zsh https://raw.githubusercontent.com/roboll/helmfile/master/autocomplete/helmfile_zsh_autocomplete;\
-    echo 'source <(stern --completion=zsh)' >> /root/.zshrc
+    mkdir -p "/home/${USER_NAME}/.oh-my-zsh/completions";\
+    ln -s /opt/kubectx/completion/_kubectx.zsh "/home/${USER_NAME}/.oh-my-zsh/completions/_kubectx.zsh";\
+    ln -s /opt/kubectx/completion/_kubens.zsh "/home/${USER_NAME}/.oh-my-zsh/completions/_kubens.zsh";\
+    echo 'source <(helm completion zsh)' >> "/home/${USER_NAME}/.zshrc";\
+    echo 'source <(stern --completion=zsh)' >> "/home/${USER_NAME}/.zshrc"
+
+USER root
 
 COPY entrypoint.sh /entrypoint.sh
 
