@@ -2,14 +2,14 @@
 set -euo nounset
 
 if [[ "${USER_NAME:-user}" != "user" ]]; then
-    usermod -md /home/${USER_NAME} -l ${USER_NAME} user
+    usermod -md /home/${USER_NAME} -l ${USER_NAME} user || true
 fi
 
 
 readonly ENTRYPOINTD="/etc/codeserver.d/"
 if [[ -d "${ENTRYPOINTD}" ]]; then
     echo "export USER_NAME='${USER_NAME:-user}'" >> /tmp/.env
-    
+
     for f in `find "${ENTRYPOINTD}" -type f -executable -print`; do
         echo "Running '$f'"
         su - "${USER_NAME:-user}" -- /bin/bash -ce ". /tmp/.env; $f"
