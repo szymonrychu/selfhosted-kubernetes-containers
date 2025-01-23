@@ -9,7 +9,7 @@ readonly ENTRYPOINTD="/etc/codeserver.d/"
 if [[ -d "${ENTRYPOINTD}" ]]; then
     for f in `find "${ENTRYPOINTD}" -type f -executable -print`; do
         echo "Running '$f'"
-        su - "${USER_NAME:-user}" -- "$f" || true
+        su -p - "${USER_NAME:-user}" -- "$f" || true
     done
 fi
 
