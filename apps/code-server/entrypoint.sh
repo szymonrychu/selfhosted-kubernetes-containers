@@ -14,12 +14,12 @@ if [[ -d "${ENTRYPOINTD}" ]]; then
 
     for f in `find "${ENTRYPOINTD}" -type f -executable -print`; do
         echo "Running '$f'"
-        su - "${USER_NAME:-user}" -- /bin/bash -ce ". /tmp/.tmp_env; $f"
+        su - "${USER_NAME:-user}" -c /bin/bash -ce ". /tmp/.tmp_env; $f"
     done
 fi
 
 cd "/home/${USER_NAME}"
-exec su - "${USER_NAME:-user}" -c "/usr/bin/code-server" --auth none --bind-addr "0.0.0.0:${CODER_PORT:-8080}" &
+exec su - "${USER_NAME:-user}" -- "/usr/bin/code-server" --auth none --bind-addr "0.0.0.0:${CODER_PORT:-8080}" &
 pid="$!"
 trap 'kill -SIGTERM $pid; wait $pid' SIGTERM SIGINT
 wait $pid
