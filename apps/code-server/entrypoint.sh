@@ -2,7 +2,9 @@
 set -euo nounset
 
 if [[ "${USER_NAME:-user}" != "user" ]]; then
-    usermod -md /home/${USER_NAME} -l ${USER_NAME} user || true
+    usermod -d "/home/${USER_NAME}" -l ${USER_NAME} user || true
+    cd /home/user
+    rsync -avhz . "/home/${USER_NAME}"
 fi
 
 
@@ -16,6 +18,7 @@ if [[ -d "${ENTRYPOINTD}" ]]; then
     done
 fi
 
+cd "/home/${USER_NAME}"
 exec su - "${USER_NAME:-user}" -- "/usr/bin/code-server" --auth none --bind-addr "0.0.0.0:${CODER_PORT:-8080}" &
 pid="$!"
 trap 'kill -SIGTERM $pid; wait $pid' SIGTERM SIGINT
