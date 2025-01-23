@@ -14,7 +14,7 @@ if [[ -d "${ENTRYPOINTD}" ]]; then
 
     for f in `find "${ENTRYPOINTD}" -type f -executable -print`; do
         echo "Running '$f'"
-        su - "${USER_NAME:-user}" -c /bin/bash -ce ". /tmp/.tmp_env; $f"
+        su - "${USER_NAME:-user}" -c "/bin/bash -ce . /tmp/.tmp_env; $f"
     done
 fi
 
