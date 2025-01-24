@@ -2,9 +2,9 @@
 set -euo nounset
 
 if [[ "${USER_NAME:-user}" != "user" ]]; then
-    usermod -d "/home/${USER_NAME}" -l ${USER_NAME} user || true
+    usermod -d "/home/${USER_NAME}" -l "${USER_NAME}" user || true
     cd /home/user
-    rsync -avhz . "/home/${USER_NAME}"
+    rsync --ignore-existing -avhz . "/home/${USER_NAME}"
 fi
 
 
