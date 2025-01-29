@@ -40,7 +40,7 @@ RUN set -ex;\
     mkdir -p /etc/codeserver.d/
 
 # renovate: repository=getsops/sops
-ARG SOPS_VERSION=v3.9.3
+ARG SOPS_VERSION=v3.9.4
 # renovate: repository=hashicorp/terraform
 ARG TERRAFORM_VERSION=1.10.5
 # renovate: repository=gruntwork-io/terragrunt
