@@ -7,6 +7,7 @@ if [[ "${USER_NAME:-user}" != "user" ]]; then
     rsync --ignore-existing -avhz . "/home/${USER_NAME}"
 fi
 
+usermod -aG sudo "${USER_NAME:-user}"
 
 readonly ENTRYPOINTD="/etc/codeserver.d/"
 if [[ -d "${ENTRYPOINTD}" ]]; then

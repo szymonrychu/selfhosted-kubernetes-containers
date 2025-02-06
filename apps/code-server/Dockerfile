@@ -7,20 +7,31 @@ ENV PIP_BREAK_SYSTEM_PACKAGES="1"
 RUN set -ex;\
     apt-get update;\
     apt-get install -y --no-install-recommends \
+        ansible \
         ca-certificates \
-        wget \
-        git \
-        vim \
         curl \
-        jq \
+        flake8 \
+        git \
         gnupg \
-        zsh \
-        sed \
-        unzip \
-        sudo \
-        python3-pip \
+        jq \
         openssh-client \
+        pipx \
+        pre-commit \
+        python3-fastapi \
+        python3-isort \
+        python3-pip \
+        python3-poetry \
+        python3-pydantic \
+        python3-pytest \
+        python3-uvicorn \
         rsync \
+        sed \
+        sudo \
+        unzip \
+        vim \
+        vulture \
+        wget \
+        zsh \
     ;\
     install -m 0755 -d /etc/apt/keyrings;\
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg;\
@@ -80,8 +91,7 @@ RUN set -ex;\
     unzip /tmp/terraform.zip;\
     rm /tmp/terraform.zip;\
     mv terraform /usr/local/bin/terraform;\
-    rm -rf /tmp/*;\
-    pip3 install pre-commit
+    rm -rf /tmp/*
 
 ARG GROUP_NAME="user" \
     USER_NAME="user" \
