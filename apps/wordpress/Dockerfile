@@ -1,4 +1,4 @@
-FROM bitnami/wordpress:6.7.1-debian-12-r15@sha256:8280dbc2f05d401f8ebb49204fde1affd3fd94491d92a5a061ae5e1ffa390870
+FROM bitnami/wordpress:6.7.1-debian-12-r16@sha256:ce3924624acae1e46ee3b59a697efc709606728014cb84722579ced03d3bc673
 
 # renovate: repository=kevinoid/postgresql-for-wordpress
 ARG POSTGRESQL_FOR_WORDPRESS_VERSION="v3.4.1"
