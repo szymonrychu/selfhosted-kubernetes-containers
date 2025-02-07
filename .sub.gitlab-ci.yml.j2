@@ -14,9 +14,9 @@ stages:
   script:
     - |
         VERSION="$(cat {{ container.root_path }}/VERSION | xargs echo -n)"
-        /kaniko/executor
-          --context "${CI_PROJECT_DIR}/{{ container.root_path }}"
-          --dockerfile "${CI_PROJECT_DIR}/{{ container.root_path }}/Dockerfile"
+        /kaniko/executor \
+          --context "${CI_PROJECT_DIR}/{{ container.root_path }}" \
+          --dockerfile "${CI_PROJECT_DIR}/{{ container.root_path }}/Dockerfile" \
           --destination "${CI_REGISTRY_IMAGE}/{{ container.name }}:${VERSION}"
   rules:
     - changes:
