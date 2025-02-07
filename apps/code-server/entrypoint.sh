@@ -7,7 +7,10 @@ if [[ "${USER_NAME:-user}" != "user" ]]; then
     rsync --ignore-existing -avhz . "/home/${USER_NAME}"
 fi
 
+chmod 0666  /var/run/docker.sock
+
 usermod -aG sudo "${USER_NAME:-user}"
+chown -R "${USER_NAME:-user}" "/home/${USER_NAME:-user}"
 
 readonly ENTRYPOINTD="/etc/codeserver.d/"
 if [[ -d "${ENTRYPOINTD}" ]]; then
