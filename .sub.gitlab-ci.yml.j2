@@ -1,13 +1,11 @@
 stages:
   - build
 
-.default:
-  tags:
-    - ci
-
 {%- for container in containers %}
 {{ container.name }}:
   stage: build
+  tags:
+    - ci
   image:
     name: gcr.io/kaniko-project/executor:v1.23.2-debug
     entrypoint: [""]
