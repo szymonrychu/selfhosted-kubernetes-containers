@@ -8,14 +8,11 @@ RUN set -ex;\
     apt-get update;\
     apt-get install -y --no-install-recommends \
         ansible \
-        apt-transport-https \
-        bash \
         ca-certificates \
         curl \
         flake8 \
         git \
         gnupg \
-        gnupg2 \
         jq \
         openssh-client \
         pipx \
@@ -26,12 +23,10 @@ RUN set -ex;\
         python3-poetry \
         python3-pydantic \
         python3-pytest \
-        python3-ruamel.yaml \
         python3-uvicorn \
         rsync \
         sed \
         sudo \
-        tar \
         unzip \
         vim \
         vulture \
@@ -61,6 +56,10 @@ ARG SOPS_VERSION=v3.9.4
 ARG TERRAFORM_VERSION=1.10.5
 # renovate: repository=gruntwork-io/terragrunt
 ARG TERRAGRUNT_VERSION=v0.72.6
+# renovate: repository=databus23/helm-diff
+ARG HELM_DIFF_VERSION=v3.10.0
+# renovate: repository=jkroepke/helm-secrets
+ARG HELM_SECRETS_VERSION=v4.6.2
 # renovate: repository=helmfile/helmfile
 ARG HELMFILE_VERSION=0.170.1
 # renovate: repository=stern/stern
@@ -80,6 +79,8 @@ RUN set -ex;\
     ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx;\
     ln -s /opt/kubectx/kubens /usr/local/bin/kubens;\
     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash;\
+    helm plugin install https://github.com/databus23/helm-diff;\
+    helm plugin install https://github.com/jkroepke/helm-secrets;\
     wget -qO /tmp/helmfile.tar.gz https://github.com/helmfile/helmfile/releases/download/v${HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION}_linux_amd64.tar.gz;\
     tar -xzf /tmp/helmfile.tar.gz -C /tmp/;\
     mv /tmp/helmfile /usr/local/bin/helmfile;\
@@ -100,15 +101,9 @@ ARG GROUP_NAME="user" \
 RUN set -ex;\
     groupadd --gid "${USER_GID}" "${GROUP_NAME}";\
     useradd --create-home --home-dir "/home/${USER_NAME}" --uid "${USER_UID}" --shell /usr/bin/zsh --gid "${USER_GID}" "${USER_NAME}";\
-    usermod -aG sudo "${USER_NAME}";\
     sed -i -e 's/%sudo	ALL=(ALL:ALL) ALL/%sudo	ALL=(ALL:ALL) NOPASSWD:ALL/g' /etc/sudoers
 
 USER $USER_NAME
-
-# renovate: repository=databus23/helm-diff
-ARG HELM_DIFF_VERSION=v3.10.0
-# renovate: repository=jkroepke/helm-secrets
-ARG HELM_SECRETS_VERSION=v4.6.2
 
 RUN set -ex;\
     sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)";\
@@ -116,9 +111,7 @@ RUN set -ex;\
     ln -s /opt/kubectx/completion/_kubectx.zsh "/home/${USER_NAME}/.oh-my-zsh/completions/_kubectx.zsh";\
     ln -s /opt/kubectx/completion/_kubens.zsh "/home/${USER_NAME}/.oh-my-zsh/completions/_kubens.zsh";\
     echo 'source <(helm completion zsh)' >> "/home/${USER_NAME}/.zshrc";\
-    echo 'source <(stern --completion=zsh)' >> "/home/${USER_NAME}/.zshrc";\
-    helm plugin install --version "$HELM_DIFF_VERSION" https://github.com/databus23/helm-diff;\
-    helm plugin install --version "$HELM_SECRETS_VERSION" https://github.com/jkroepke/helm-secrets
+    echo 'source <(stern --completion=zsh)' >> "/home/${USER_NAME}/.zshrc"
 
 USER root
 
