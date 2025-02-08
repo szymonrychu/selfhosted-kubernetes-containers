@@ -8,13 +8,18 @@ module.exports = {
   "dryRun": null,
   "extends": ["config:recommended", ":rebaseStalePrs"],
   "gitAuthor": "szymonrichert.pl bot <bot@szymonrichert.pl>",
-  "onboarding": false,
   "pinDigests": true,
-  "platform": "github",
   "prConcurrentLimit": 100,
   "rebaseWhen": "conflicted",
-  "repositories": ["szymonrychu/selfhosted-kubernetes-containers"],
   "semanticCommits": "enabled",
   "suppressNotifications": ["prIgnoreNotification"],
   "username": "szymonrichert.pl bot",
+  "platform": "gitlab",
+  "endpoint": process.env.CI_API_V4_URL,
+  "token": process.env.BOT_TOKEN,
+  "onboarding": false,
+  "onboardingConfig": {
+    extends: ['config:recommended'],
+  },
+  "repositories": [process.env.CI_PROJECT_PATH]
 };

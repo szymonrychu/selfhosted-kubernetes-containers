@@ -33,7 +33,7 @@
       "matchManagers": ["regex"],
       "postUpgradeTasks": {
         "commands": [
-          "./.github/bump_version.sh {{{parentDir}}}"
+          "./.bump_version.sh {{{parentDir}}}"
         ],
         "executionMode": "branch"
       }
