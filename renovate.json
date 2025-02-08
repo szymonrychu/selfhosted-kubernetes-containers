@@ -43,12 +43,14 @@
       "matchUpdateTypes": ["pin", "digest", "patch", "minor"],
       "minimumReleaseAge": null,
       "labels": ["automerge"],
-      "suppressNotifications": ["prIgnoreNotification", "prEditedNotification"]
+      "suppressNotifications": ["prIgnoreNotification", "prEditedNotification"],
+      "automerge": true
     },
     {
       "description": "MajorUpgrade",
       "matchUpdateTypes": ["major"],
-      "minimumReleaseAge": "7 days"
+      "minimumReleaseAge": "7 days",
+      "automerge": true
     }
   ]
 }
